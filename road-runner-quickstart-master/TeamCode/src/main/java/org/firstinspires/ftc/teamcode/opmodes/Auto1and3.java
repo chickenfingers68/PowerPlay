@@ -155,6 +155,7 @@ public class Auto1and3 extends LinearOpMode {
                     // Make sure we use the async follow function
                     if (!drive.isBusy()) {
                         currentState = State.TRAJECTORY_2;
+                        drive.setPoseEstimate(new Pose2d(-34, 0, Math.toRadians(90)));
                         drive.turnAsync(turnAngle1);
                     }
                     break;
@@ -166,6 +167,7 @@ public class Auto1and3 extends LinearOpMode {
                     if (!drive.isBusy()) {
                         downArmTimer.reset();
                         currentState = State.WAIT_1;
+                        drive.setPoseEstimate(new Pose2d(-34, 0, Math.toRadians(180)));
                     }
                     break;
                 case WAIT_1:
@@ -176,8 +178,8 @@ public class Auto1and3 extends LinearOpMode {
                     if(downArmTimer.seconds() >0.5){
                         claw.setPosition(CLOSED_CLAW);
                         arm.setPower(1);
-                        drive.followTrajectoryAsync(trajectory2);
                         currentState = State.TRAJECTORY_2;
+                        drive.followTrajectoryAsync(trajectory2);
                     }
                 case TRAJECTORY_2:
                     lift.setTarget(900);
@@ -190,6 +192,7 @@ public class Auto1and3 extends LinearOpMode {
                     // Move on to the next state, TURN_1, once finished
                     if (!drive.isBusy()) {
                         currentState = State.TRAJECTORY_3;
+                        drive.setPoseEstimate(new Pose2d(-63, -12, Math.toRadians(90)));
                         drive.followTrajectoryAsync(trajectory3);
                     }
                     break;
@@ -326,8 +329,4 @@ public class Auto1and3 extends LinearOpMode {
             telemetry.update();
         }
     }
-
-    // Assume we have a hardware class called lift
-    // Lift uses a PID controller to maintain its height
-    // Thus, update() must be called in a loop
 }
