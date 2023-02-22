@@ -39,7 +39,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 @Autonomous(name = "AsyncFollowingFSM", group = "advanced")
 @Disabled
-public class AsyncFollowingFSM extends LinearOpMode {
+public class Auto1and3 extends LinearOpMode {
     private Servo claw;
 
     final double OPEN_CLAW = .46;
@@ -49,13 +49,17 @@ public class AsyncFollowingFSM extends LinearOpMode {
     // This is essentially just defines the possible steps our program will take
     enum State {
         TRAJECTORY_1,   //drive to pole
-        WAIT_1, //turn to score
+        TURN_1, //turn to opposite pole
+        WAIT_1, //wait to score
         TRAJECTORY_2, //drive to stack
         TRAJECTORY_3, //drive to pole
+        WAIT_2, //wait to score
         TRAJECTORY_4, //drive to stack
         TRAJECTORY_5, //drive to pole
+        WAIT_3, //wait to score
         TRAJECTORY_6, //drive to stack
         TRAJECTORY_7, //drive to pole
+        WAIT_4, //wait to score
         TRAJECTORY_8, //drive to stack
         TRAJECTORY_9, //park mid
         TRAJECTORY_10, //park right
@@ -123,13 +127,7 @@ public class AsyncFollowingFSM extends LinearOpMode {
                 .build();
 
 
-        // Define a 1.5 second wait time
-        double waitTime1 = 1.5;
-        ElapsedTime waitTimer1 = new ElapsedTime();
         ElapsedTime downArmTimer = new ElapsedTime();
-
-        // Define the angle for turn 2
-        double turnAngle2 = Math.toRadians(720);
 
         waitForStart();
 
@@ -157,7 +155,7 @@ public class AsyncFollowingFSM extends LinearOpMode {
                     // Make sure we use the async follow function
                     if (!drive.isBusy()) {
                         currentState = State.TRAJECTORY_2;
-                        drive.followTrajectoryAsync(trajectory2);
+                        drive.turnAsync(turnAngle1);
                     }
                     break;
                 case TURN_1:
@@ -203,71 +201,103 @@ public class AsyncFollowingFSM extends LinearOpMode {
                     // Check if the drive class is busy following the trajectory
                     // Move on to the next state, TURN_1, once finished
                     if (!drive.isBusy()) {
-                        currentState = State.TRAJECTORY_4;
+                        downArmTimer.reset();
+                        currentState = State.WAIT_2;
+                    }
+                    break;
+                case WAIT_2:
+                    if(downArmTimer.seconds() >0.5){
+                        claw.setPosition(OPEN_CLAW);
+                        downArmTimer.reset();
+                    }
+                    if(downArmTimer.seconds() >0.5){
+                        claw.setPosition(CLOSED_CLAW);
+                        arm.setPower(1);
                         drive.followTrajectoryAsync(trajectory4);
+                        currentState = State.TRAJECTORY_4;
                     }
                     break;
                 case TRAJECTORY_4:
-                    // Check if the drive class is busy following the trajectory
-                    // If not, move onto the next state, WAIT_1
-                    if (!drive.isBusy()) {
-                        currentState = State.WAIT_1;
-
-                        // Start the wait timer once we switch to the next state
-                        // This is so we can track how long we've been in the WAIT_1 state
-                        waitTimer1.reset();
+                    lift.setTarget(900);
+                    downArmTimer.reset();
+                    if(downArmTimer.seconds() >0.5){
+                        claw.setPosition(OPEN_CLAW);
                         downArmTimer.reset();
                     }
-                    break;
-                case WAIT_1:
-                    arm_left.setPower(-0.75);
-                    arm_right.setPower(-0.75);
-                    if(downArmTimer.seconds() >= 1){
-                        claw.setPosition(CLOSED_CLAW);
-                    }
-                    // Check if the timer has exceeded the specified wait time
-                    // If so, move on to the TURN_2 state
-                    if (waitTimer1.seconds() >= waitTime1) {
+                    // Check if the drive class is busy following the trajectory
+                    // Move on to the next state, TURN_1, once finished
+                    if (!drive.isBusy()) {
                         currentState = State.TRAJECTORY_5;
                         drive.followTrajectoryAsync(trajectory5);
                     }
                     break;
                 case TRAJECTORY_5:
-                    // Check if the drive class is busy turning
-                    // If not, move onto the next state, IDLE
-                    // We are done with the program
+                    claw.setPosition(CLOSED_CLAW);
+                    arm.setPower(-1);
+                    lift.setTarget(2400);
+                    downArmTimer.reset();
+                    // Check if the drive class is busy following the trajectory
+                    // Move on to the next state, TURN_1, once finished
                     if (!drive.isBusy()) {
-                        currentState = State.TRAJECTORY_6;
+                        downArmTimer.reset();
+                        currentState = State.WAIT_3;
+                    }
+                    break;
+                case WAIT_3:
+                    if(downArmTimer.seconds() >0.5){
+                        claw.setPosition(OPEN_CLAW);
+                        downArmTimer.reset();
+                    }
+                    if(downArmTimer.seconds() >0.5){
+                        claw.setPosition(CLOSED_CLAW);
+                        arm.setPower(1);
                         drive.followTrajectoryAsync(trajectory6);
+                        currentState = State.TRAJECTORY_6;
                     }
                     break;
                 case TRAJECTORY_6:
-                    // Check if the drive class is busy turning
-                    // If not, move onto the next state, IDLE
-                    // We are done with the program
+                    lift.setTarget(900);
+                    downArmTimer.reset();
+                    if(downArmTimer.seconds() >0.5){
+                        claw.setPosition(OPEN_CLAW);
+                        downArmTimer.reset();
+                    }
+                    // Check if the drive class is busy following the trajectory
+                    // Move on to the next state, TURN_1, once finished
                     if (!drive.isBusy()) {
                         currentState = State.TRAJECTORY_7;
                         drive.followTrajectoryAsync(trajectory7);
                     }
                     break;
                 case TRAJECTORY_7:
+                    claw.setPosition(CLOSED_CLAW);
+                    arm.setPower(-1);
+                    lift.setTarget(2400);
+                    downArmTimer.reset();
                     // Check if the drive class is busy following the trajectory
                     // Move on to the next state, TURN_1, once finished
                     if (!drive.isBusy()) {
+                        downArmTimer.reset();
+                        currentState = State.WAIT_4;
+                    }
+                    break;
+                case WAIT_4:
+                    if(downArmTimer.seconds() >0.5){
+                        claw.setPosition(OPEN_CLAW);
+                        downArmTimer.reset();
+                    }
+                    if(downArmTimer.seconds() >0.5){
+                        claw.setPosition(CLOSED_CLAW);
+                        arm.setPower(1);
+                        drive.followTrajectoryAsync(trajectory6);
                         currentState = State.TRAJECTORY_8;
-                        drive.followTrajectoryAsync(trajectory8);
                     }
                     break;
                 case TRAJECTORY_8:
                     // Check if the drive class is busy following the trajectory
                     // If not, move onto the next state, WAIT_1
                     if (!drive.isBusy()) {
-                        currentState = State.WAIT_1;
-
-                        // Start the wait timer once we switch to the next state
-                        // This is so we can track how long we've been in the WAIT_1 state
-                        waitTimer1.reset();
-                        downArmTimer.reset();
+                        currentState = State.IDLE;
                     }
                     break;
                 case IDLE:
