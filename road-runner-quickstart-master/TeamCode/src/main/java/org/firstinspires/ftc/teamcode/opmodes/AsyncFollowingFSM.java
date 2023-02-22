@@ -43,7 +43,7 @@ public class AsyncFollowingFSM extends LinearOpMode {
     private CRServo arm_right;
     private Servo claw;
 
-    final double OPEN_CLAW = .15;
+    final double OPEN_CLAW = .46;
     final double CLOSED_CLAW = 0;
 
     // This enum defines our "state"
