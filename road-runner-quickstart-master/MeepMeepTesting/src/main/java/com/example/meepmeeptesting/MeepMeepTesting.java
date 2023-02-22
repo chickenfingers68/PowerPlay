@@ -14,7 +14,7 @@ public class MeepMeepTesting {
         MeepMeep meepMeep = new MeepMeep(800);
         RoadRunnerBotEntity test = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(51, 35, Math.toRadians(180), Math.toRadians(60), 11.9)
+                .setConstraints(51, 40, Math.toRadians(180), Math.toRadians(60), 11.9)
                 .setDimensions(12.25, 14)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-35, -61, Math.toRadians(90)))
@@ -26,11 +26,6 @@ public class MeepMeepTesting {
                                 .splineToConstantHeading(new Vector2d(-63, -12), Math.toRadians(180))
                                 .waitSeconds(.5)
 
-                                .splineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(270)), Math.toRadians(0))
-                                .back(4)
-                                .forward(4)
-                                .lineToSplineHeading(new Pose2d(-63, -12, Math.toRadians(180)))
-
                                 .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(270)))
                                 .back(4)
                                 .forward(4)
@@ -45,6 +40,12 @@ public class MeepMeepTesting {
                                 .back(4)
                                 .forward(4)
                                 .lineToSplineHeading(new Pose2d(-63, -12, Math.toRadians(180)))
+
+                                .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(270)))
+                                .back(4)
+                                .waitSeconds(1)
+                                .forward(2)
+                                .strafeRight(36)
 
                                 .build()
 
