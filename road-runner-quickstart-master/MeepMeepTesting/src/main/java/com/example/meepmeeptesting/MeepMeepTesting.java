@@ -14,38 +14,47 @@ public class MeepMeepTesting {
         MeepMeep meepMeep = new MeepMeep(800);
         RoadRunnerBotEntity test = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(51, 40, Math.toRadians(180), Math.toRadians(60), 11.9)
+                .setConstraints(38, 38, Math.toRadians(180), Math.toRadians(60), 11.9)
                 .setDimensions(12.25, 14)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-35, -61, Math.toRadians(90)))
-                                .lineTo(new Vector2d(-34, 0))
-                                .turn(Math.toRadians(90))
+                                .splineToSplineHeading(new Pose2d(-32, 2, Math.toRadians(180)), Math.toRadians(90))
+                                //.lineTo(new Vector2d(-34, 0))
+                                //.turn(Math.toRadians(90))
                                 .waitSeconds(1)
+
                                 .strafeLeft(4)
                                 //.splineToConstantHeading(new Vector2d(-34, -12), Math.toRadians(90))
                                 .splineToConstantHeading(new Vector2d(-63, -12), Math.toRadians(180))
                                 .waitSeconds(.5)
-
-                                .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(270)))
-                                .back(4)
-                                .forward(4)
-                                .lineToSplineHeading(new Pose2d(-63, -12, Math.toRadians(180)))
-
-                                .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(270)))
-                                .back(4)
-                                .forward(4)
-                                .lineToSplineHeading(new Pose2d(-63, -12, Math.toRadians(180)))
-
-                                .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(270)))
-                                .back(4)
-                                .forward(4)
-                                .lineToSplineHeading(new Pose2d(-63, -12, Math.toRadians(180)))
-
-                                .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(270)))
-                                .back(4)
+                                .lineTo(new Vector2d(-51, -12))
+                                .splineToConstantHeading(new Vector2d(-32, 2), Math.toRadians(90))
                                 .waitSeconds(1)
-                                .forward(2)
-                                .strafeRight(36)
+
+                                .strafeLeft(4)
+                                .splineToConstantHeading(new Vector2d(-63, -12), Math.toRadians(180))
+                                .waitSeconds(.5)
+                                .lineTo(new Vector2d(-51, -12))
+                                .splineToConstantHeading(new Vector2d(-32, 2), Math.toRadians(90))
+                                .waitSeconds(1)
+
+                                .strafeLeft(4)
+                                .splineToConstantHeading(new Vector2d(-63, -12), Math.toRadians(180))
+                                .waitSeconds(.5)
+                                .lineTo(new Vector2d(-51, -12))
+                                .splineToConstantHeading(new Vector2d(-32, 2), Math.toRadians(90))
+                                .waitSeconds(1)
+
+                                .strafeLeft(4)
+                                .splineToConstantHeading(new Vector2d(-63, -12), Math.toRadians(180))
+                                .waitSeconds(.5)
+                                .lineTo(new Vector2d(-51, -12))
+                                .splineToConstantHeading(new Vector2d(-32, 2), Math.toRadians(90))
+                                .waitSeconds(1)
+
+                                .strafeLeft(4)
+                                .splineToConstantHeading(new Vector2d(-63, -12), Math.toRadians(180))
+                                .waitSeconds(.5)
 
                                 .build()
 

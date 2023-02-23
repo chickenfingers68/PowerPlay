@@ -19,14 +19,14 @@ public class Arm {
     private double power;
 
     public Arm(HardwareMap hwMap){
-        arm_left = hwMap.get(CRServo.class, "slide_left");
-        arm_right = hwMap.get(CRServo.class, "slide_right");
+        arm_left = hwMap.get(CRServo.class, "arm_left");
+        arm_right = hwMap.get(CRServo.class, "arm_right");
 
         arm_right.setDirection(DcMotorSimple.Direction.REVERSE);
     }
     public void update(){
-        arm_left.setPower(power);
-        arm_right.setPower(power);
+        arm_left.setPower(-power);
+        arm_right.setPower(-power);
     }
     public void idle(){
         arm_right.setPower(0.03);

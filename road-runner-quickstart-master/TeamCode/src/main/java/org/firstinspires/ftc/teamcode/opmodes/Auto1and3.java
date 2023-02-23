@@ -37,8 +37,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * to supercharge your code. This can be much cleaner by abstracting many of these things. This
  * opmode only serves as an initial starting point.
  */
-@Autonomous(name = "AsyncFollowingFSM", group = "advanced")
-@Disabled
+@Autonomous(name = "1nad3", group = "advanced")
+//@Disabled
 public class Auto1and3 extends LinearOpMode {
     private Servo claw;
 
@@ -52,6 +52,7 @@ public class Auto1and3 extends LinearOpMode {
         TURN_1, //turn to opposite pole
         WAIT_1, //wait to score
         TRAJECTORY_2, //drive to stack
+        TRAJECTORY_2a,
         TRAJECTORY_3, //drive to pole
         WAIT_2, //wait to score
         TRAJECTORY_4, //drive to stack
@@ -72,7 +73,7 @@ public class Auto1and3 extends LinearOpMode {
 
     // Define our start pose
     // This assumes we start at x: 15, y: 10, heading: 180 degrees
-    Pose2d startPose = new Pose2d(-35, -61, Math.toRadians(0));
+    Pose2d startPose = new Pose2d(-35, -61, Math.toRadians(90));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -89,7 +90,7 @@ public class Auto1and3 extends LinearOpMode {
 
         // Let's define our trajectories
         Trajectory trajectory1 = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-34, 0))
+                .lineTo(new Vector2d(-32, 2))
                 .build();
 
         double turnAngle1 = Math.toRadians(90);
@@ -97,6 +98,12 @@ public class Auto1and3 extends LinearOpMode {
         // Ensure that we call trajectory1.end() as the start for this one
         Trajectory trajectory2 = drive.trajectoryBuilder(trajectory1.end().plus(new Pose2d(0, 0, turnAngle1)))
                 .strafeLeft(4)
+                .addDisplacementMarker(3, () ->{
+                    //lift.setTarget(900);
+                })
+                .build();
+
+        Trajectory trajectory2a = drive.trajectoryBuilder(trajectory2.end())
                 .splineToConstantHeading(new Vector2d(-63, -12), Math.toRadians(180))
                 .build();
 
@@ -153,34 +160,48 @@ public class Auto1and3 extends LinearOpMode {
                     // Once `isBusy() == false`, the trajectory follower signals that it is finished
                     // We move on to the next state
                     // Make sure we use the async follow function
+                    //lift.setTarget(2400);
                     if (!drive.isBusy()) {
-                        currentState = State.TRAJECTORY_2;
+                        currentState = State.TURN_1;
                         drive.turnAsync(turnAngle1);
                     }
                     break;
                 case TURN_1:
-                    lift.setTarget(2400);
                     arm.setPower(-1);
+                    downArmTimer.reset();
                     // Check if the drive class is busy turning
                     // If not, move onto the next state, TRAJECTORY_3, once finished
                     if (!drive.isBusy()) {
                         downArmTimer.reset();
-                        currentState = State.WAIT_1;
+                        currentState = State.TRAJECTORY_2;
+                        drive.followTrajectoryAsync(trajectory2);
                     }
                     break;
                 case WAIT_1:
-                    if(downArmTimer.seconds() >0.5){
+                    downArmTimer.reset();
+                    if(downArmTimer.seconds() < 10){
+
+                    }
+                    if(downArmTimer.seconds() >10){
                         claw.setPosition(OPEN_CLAW);
+                        arm.setPower(1);
                         downArmTimer.reset();
                     }
-                    if(downArmTimer.seconds() >0.5){
+                    if(downArmTimer.seconds() >15){
                         claw.setPosition(CLOSED_CLAW);
-                        arm.setPower(1);
                         currentState = State.TRAJECTORY_2;
                         drive.followTrajectoryAsync(trajectory2);
                     }
                 case TRAJECTORY_2:
-                    lift.setTarget(900);
+                    arm.setPower(.1);
+                    // Check if the drive class is busy following the trajectory
+                    // Move on to the next state, TURN_1, once finished
+                    if (!drive.isBusy()) {
+                        currentState = State.TRAJECTORY_2a;
+                        drive.followTrajectoryAsync(trajectory2a);
+                    }
+                    break;
+                case TRAJECTORY_2a:
                     downArmTimer.reset();
                     if(downArmTimer.seconds() >0.5){
                         claw.setPosition(OPEN_CLAW);
@@ -196,7 +217,7 @@ public class Auto1and3 extends LinearOpMode {
                 case TRAJECTORY_3:
                     claw.setPosition(CLOSED_CLAW);
                     arm.setPower(-1);
-                    lift.setTarget(2400);
+                    //lift.setTarget(2400);
                     downArmTimer.reset();
                     // Check if the drive class is busy following the trajectory
                     // Move on to the next state, TURN_1, once finished
@@ -218,7 +239,7 @@ public class Auto1and3 extends LinearOpMode {
                     }
                     break;
                 case TRAJECTORY_4:
-                    lift.setTarget(900);
+                    //lift.setTarget(900);
                     downArmTimer.reset();
                     if(downArmTimer.seconds() >0.5){
                         claw.setPosition(OPEN_CLAW);
@@ -234,7 +255,7 @@ public class Auto1and3 extends LinearOpMode {
                 case TRAJECTORY_5:
                     claw.setPosition(CLOSED_CLAW);
                     arm.setPower(-1);
-                    lift.setTarget(2400);
+                    //lift.setTarget(2400);
                     downArmTimer.reset();
                     // Check if the drive class is busy following the trajectory
                     // Move on to the next state, TURN_1, once finished
@@ -256,7 +277,7 @@ public class Auto1and3 extends LinearOpMode {
                     }
                     break;
                 case TRAJECTORY_6:
-                    lift.setTarget(900);
+                    //lift.setTarget(900);
                     downArmTimer.reset();
                     if(downArmTimer.seconds() >0.5){
                         claw.setPosition(OPEN_CLAW);
@@ -272,7 +293,7 @@ public class Auto1and3 extends LinearOpMode {
                 case TRAJECTORY_7:
                     claw.setPosition(CLOSED_CLAW);
                     arm.setPower(-1);
-                    lift.setTarget(2400);
+                    //lift.setTarget(2400);
                     downArmTimer.reset();
                     // Check if the drive class is busy following the trajectory
                     // Move on to the next state, TURN_1, once finished
@@ -323,6 +344,8 @@ public class Auto1and3 extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
+            telemetry.addData("slide target", lift.getTarget());
+            telemetry.addData("state ", currentState);
             telemetry.update();
         }
     }

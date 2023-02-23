@@ -35,6 +35,9 @@ public class Lift {
     public void setTarget(int t){
         target = t;
     }
+    public int getTarget(){
+        return target;
+    }
     public void update(){
         controller.setPID(p, i, d);
         int slidePosL = slide_left.getCurrentPosition();
