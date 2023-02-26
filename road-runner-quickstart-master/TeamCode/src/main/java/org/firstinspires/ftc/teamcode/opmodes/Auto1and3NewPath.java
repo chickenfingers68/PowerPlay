@@ -57,7 +57,7 @@ public class Auto1and3NewPath extends LinearOpMode {
 
     // Define our start pose
     // This assumes we start at x: 15, y: 10, heading: 180 degrees
-    Pose2d startPose = new Pose2d(15, 10, Math.toRadians(180));
+    Pose2d startPose = new Pose2d(-35, -61, Math.toRadians(90));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -72,25 +72,25 @@ public class Auto1and3NewPath extends LinearOpMode {
 
         // Let's define our trajectories
         Trajectory trajectory1 = drive.trajectoryBuilder(startPose)
-                .splineToSplineHeading(new Pose2d(-32, 2, Math.toRadians(180)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(-30, 2, Math.toRadians(180)), Math.toRadians(90))
                 .build();
 
         // Second trajectory
         // Ensure that we call trajectory1.end() as the start for this one
         Trajectory trajectory2 = drive.trajectoryBuilder(trajectory1.end())
-                .strafeLeft(4)
+                .lineToSplineHeading(new Pose2d(-32, -4, Math.toRadians(180)))
                 .build();
 
         // Third trajectory
         // Ensure that we call trajectory2.end() as the start for this one
         Trajectory trajectory3 = drive.trajectoryBuilder(trajectory2.end())
-                .splineToConstantHeading(new Vector2d(-63, -12), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-63, -5.5, Math.toRadians(180)), Math.toRadians(180))
                 .build();
 
         // Fourth trajectory
         // Ensure that we call trajectory3.end() as the start for this one
         Trajectory trajectory4 = drive.trajectoryBuilder(trajectory3.end())
-                .lineTo(new Vector2d(-51, -12))
+                .splineToConstantHeading(new Vector2d(-44, -5.5), Math.toRadians(180))
                 .build();
 
         // Fifth trajectory

@@ -54,7 +54,7 @@ public class MeepMeepTesting {
 
                                 .strafeLeft(4)
                                 .splineToConstantHeading(new Vector2d(-63, -12), Math.toRadians(180))
-                                .waitSeconds(.5) 
+                                .waitSeconds(.5)
 
                                 .build()
 

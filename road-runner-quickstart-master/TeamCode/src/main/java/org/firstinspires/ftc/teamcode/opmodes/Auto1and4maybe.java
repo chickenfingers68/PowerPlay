@@ -36,7 +36,7 @@ public class Auto1and4maybe extends LinearOpMode {
 
     private Servo claw;
 
-    double OPEN_CLAW = 0.46;
+    double OPEN_CLAW = 0.56;
     double CLOSED_CLAW = 0;
     // This enum defines our "state"
     // This is essentially just defines the possible steps our program will take
@@ -63,7 +63,7 @@ public class Auto1and4maybe extends LinearOpMode {
 
     // Define our start pose
     // This assumes we start at x: 15, y: 10, heading: 180 degrees
-    Pose2d startPose = new Pose2d(15, 10, Math.toRadians(180));
+    Pose2d startPose = new Pose2d(-35, -61, Math.toRadians(90));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -80,12 +80,17 @@ public class Auto1and4maybe extends LinearOpMode {
 
         // Let's define our trajectories
         Trajectory trajectory1 = drive.trajectoryBuilder(startPose)
-                .splineToSplineHeading(new Pose2d(-32, 2, Math.toRadians(180)), Math.toRadians(90))
+                .addDisplacementMarker(0.5, () -> {
+                    // This marker runs 20 inches into the trajectory
+                    // Run your action in here!
+                    claw.setPosition(CLOSED_CLAW);
+                })
+                .splineToSplineHeading(new Pose2d(-27., 2, Math.toRadians(180)), Math.toRadians(90))
                 .addDisplacementMarker(25, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
                     lift.setTarget(2400);
-                    arm.setPower(-.4);
+                    arm.setPower(-.6);
                 })
                 .build();
 
@@ -98,7 +103,7 @@ public class Auto1and4maybe extends LinearOpMode {
                     arm.idle();
                     claw.setPosition(OPEN_CLAW);
                 })
-                .strafeLeft(4)
+                .lineToSplineHeading(new Pose2d(-32, -4, Math.toRadians(180)))
                 .build();
 
         // Third trajectory
@@ -107,32 +112,34 @@ public class Auto1and4maybe extends LinearOpMode {
                 .addDisplacementMarker(15, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
-                    lift.setTarget(2400);
-                    arm.setPower(-.4);
+                    arm.idle();
                 })
-                .splineToConstantHeading(new Vector2d(-63, -12), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-63, -3, Math.toRadians(170)), Math.toRadians(180))
                 .build();
 
         // Fourth trajectory
         // Ensure that we call trajectory3.end() as the start for this one
         Trajectory trajectory4 = drive.trajectoryBuilder(trajectory3.end())
-                .lineTo(new Vector2d(-51, -12))
+                .lineTo(new Vector2d(-51, -5))
                 .addTemporalMarker(1, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
-                    arm.idle();
                 })
                 .build();
 
         // Fifth trajectory
         // Ensure that we call trajectory4.end() as the start for this one
         Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end())
-                .splineToConstantHeading(new Vector2d(-32, 2), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-25.5, 3.5), Math.toRadians(90))
+                .addDisplacementMarker(10, () -> {
+                    // This marker runs 20 inches into the trajectory
+                    // Run your action in here!
+                    arm.setPower(-1);
+                })
                 .addDisplacementMarker(20, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
                     lift.setTarget(2400);
-                    arm.setPower(-.4);
                 })
                 .build();
 
@@ -172,16 +179,17 @@ public class Auto1and4maybe extends LinearOpMode {
                     }
                     break;
                 case WAIT_1:
-                    if(timer.seconds() < 0.2){
+                    if(timer.seconds() > 0.2){
                         claw.setPosition(OPEN_CLAW);
                     }
-                    if(timer.seconds() < 0.4){
-                        arm.setPower(1);
+                    if(timer.seconds() > 0.3){
+                        arm.setPower(.3);
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on to the TURN_2 state
-                    if (waitTimer1.seconds() >= waitTime1) {
+                    if (waitTimer1.seconds() >= 1) {
                         currentState = State.TRAJECTORY_2;
+                        lift.setTarget(800);
                         drive.followTrajectoryAsync(trajectory2);
                     }
                     break;
@@ -206,9 +214,11 @@ public class Auto1and4maybe extends LinearOpMode {
                     }
                     break;
                 case WAIT_2:
-                    claw.setPosition(CLOSED_CLAW);
-                    if (timer.seconds() > 0.5){
-                        arm.setPower(-0.2);
+                    if (timer.seconds() > 0.1){
+                        claw.setPosition(CLOSED_CLAW);
+                    }
+                    if (timer.seconds() > 1){
+                        arm.setPower(-0.1);
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on to the TURN_2 state
@@ -241,7 +251,7 @@ public class Auto1and4maybe extends LinearOpMode {
                     if(timer.seconds() < 0.2){
                         claw.setPosition(OPEN_CLAW);
                     }
-                    if(timer.seconds() < 0.4){
+                    if(timer.seconds() < 1){
                         arm.setPower(1);
                     }
                     // Check if the timer has exceeded the specified wait time
@@ -263,7 +273,7 @@ public class Auto1and4maybe extends LinearOpMode {
             drive.update();
             // We update our lift PID continuously in the background, regardless of state
             lift.update();
-
+            arm.update();
             // Read pose
             Pose2d poseEstimate = drive.getPoseEstimate();
 

@@ -17,7 +17,7 @@ public class Arm {
     private CRServo arm_left;
     private CRServo arm_right;
     private double power;
-    private boolean idle;
+    private boolean idle = false;
 
     public Arm(HardwareMap hwMap){
         arm_left = hwMap.get(CRServo.class, "arm_left");
