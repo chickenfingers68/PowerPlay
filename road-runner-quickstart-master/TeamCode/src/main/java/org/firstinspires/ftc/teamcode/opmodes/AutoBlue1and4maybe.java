@@ -84,7 +84,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
 
     // Define our start pose
     // This assumes we start at x: 15, y: 10, heading: 180 degrees
-    Pose2d startPose = new Pose2d(-35, -61, Math.toRadians(90));
+    Pose2d startPose = new Pose2d(35, -61, Math.toRadians(90));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -106,7 +106,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     // Run your action in here!
                     claw.setPosition(CLOSED_CLAW);
                 })
-                .splineToSplineHeading(new Pose2d(-27., 2, Math.toRadians(180)), Math.toRadians(45))
+                .splineToSplineHeading(new Pose2d(27., 2, Math.toRadians(0)), Math.toRadians(135))
                 .addDisplacementMarker(25, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
@@ -124,7 +124,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     arm.idle();
                     claw.setPosition(OPEN_CLAW);
                 })
-                .splineToConstantHeading(new Vector2d(-32, -12), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(32, -12), Math.toRadians(0))
                 .build();
 
         // Third trajectory
@@ -135,7 +135,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     // Run your action in here!
                     arm.idle();
                 })
-                .splineToConstantHeading(new Vector2d(-63, -12), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(63, -12), Math.toRadians(0))
                 .build();
 
         //todo: for setposeestimate stuff change the drive.trajectorybuilder(!!!!) stuff
@@ -143,7 +143,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
         // Fourth trajectory
         // Ensure that we call trajectory3.end() as the start for this one
         Trajectory trajectory4 = drive.trajectoryBuilder(trajectory3.end())
-                .splineToConstantHeading(new Vector2d(-51, -12), Math.toRadians(0))
+                .lineToConstantHeading(new Vector2d(32, -12))
                 .addTemporalMarker(1, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
@@ -153,7 +153,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
         // Fifth trajectory
         // Ensure that we call trajectory4.end() as the start for this one
         Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end())
-                .splineToConstantHeading(new Vector2d(-25.5, 3.5), Math.toRadians(90))
+                .lineToConstantHeading(new Vector2d(32, 2))
                 .addDisplacementMarker(10, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
@@ -173,7 +173,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     arm.idle();
                     claw.setPosition(OPEN_CLAW);
                 })
-                .splineToConstantHeading(new Vector2d(-32, -12), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(32, -12), Math.toRadians(0))
                 .build();
 
         Trajectory trajectory7 = drive.trajectoryBuilder(trajectory6.end())
@@ -182,11 +182,11 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     // Run your action in here!
                     arm.idle();
                 })
-                .splineToConstantHeading(new Vector2d(-63, -12), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(63, -12), Math.toRadians(0))
                 .build();
 
         Trajectory trajectory8 = drive.trajectoryBuilder(trajectory7.end())
-                .splineToConstantHeading(new Vector2d(-51, -12), Math.toRadians(0))
+                .lineToConstantHeading(new Vector2d(32, -12))
                 .addTemporalMarker(1, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
@@ -194,7 +194,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                 .build();
 
         Trajectory trajectory9 = drive.trajectoryBuilder(trajectory8.end())
-                .splineToConstantHeading(new Vector2d(-25.5, 3.5), Math.toRadians(90))
+                .lineToConstantHeading(new Vector2d(32, 2))
                 .addDisplacementMarker(10, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
@@ -214,7 +214,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     arm.idle();
                     claw.setPosition(OPEN_CLAW);
                 })
-                .splineToConstantHeading(new Vector2d(-32, -12), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(32, -12), Math.toRadians(0))
                 .build();
 
         Trajectory trajectory11 = drive.trajectoryBuilder(trajectory10.end())
@@ -223,11 +223,11 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     // Run your action in here!
                     arm.idle();
                 })
-                .splineToConstantHeading(new Vector2d(-63, -12), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(63, -12), Math.toRadians(0))
                 .build();
 
         Trajectory trajectory12 = drive.trajectoryBuilder(trajectory11.end())
-                .splineToConstantHeading(new Vector2d(-51, -12), Math.toRadians(0))
+                .lineToConstantHeading(new Vector2d(32, -12))
                 .addTemporalMarker(1, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
@@ -235,7 +235,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                 .build();
 
         Trajectory trajectory13 = drive.trajectoryBuilder(trajectory12.end())
-                .splineToConstantHeading(new Vector2d(-25.5, 3.5), Math.toRadians(90))
+                .lineToConstantHeading(new Vector2d(32, 2))
                 .addDisplacementMarker(10, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
