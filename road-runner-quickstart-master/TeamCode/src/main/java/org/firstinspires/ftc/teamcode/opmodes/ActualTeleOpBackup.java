@@ -52,6 +52,7 @@ public class ActualTeleOpBackup extends LinearOpMode {
         back_right = hardwareMap.get(DcMotor.class, "back_right");
         front_right = hardwareMap.get(DcMotor.class, "front_right");
         claw = hardwareMap.get(Servo.class, "claw");
+        //claw = hardwareMap.get(CRServo.class, "claw");
         arm_left = hardwareMap.get(CRServo.class, "arm_left");
         arm_right = hardwareMap.get(CRServo.class, "arm_right");
         slide_left = hardwareMap.get(DcMotor.class, "slide_left");
@@ -75,15 +76,15 @@ public class ActualTeleOpBackup extends LinearOpMode {
         //true = open
         //false = close
         boolean clawopen = false;
-        claw.setPosition(0);
+        claw.setPosition(1);
         waitForStart();
         if (opModeIsActive()) {
             // Put run blocks here.
             telemetry.addData("Status", "Initiallized");
             while (opModeIsActive()) {
-                double forward = -gamepad1.left_stick_y;
-                double strafe = gamepad1.right_stick_x;
-                double rotate = 0.65 * gamepad1.left_stick_x;
+                double forward = -0.7 * gamepad1.left_stick_y;
+                double strafe = 0.7 * gamepad1.right_stick_x;
+                double rotate = 0.7 * 0.7 * gamepad1.left_stick_x;
                 double slides = -gamepad2.right_stick_y;
                 double arms = -gamepad2.left_stick_y;
 
@@ -93,14 +94,22 @@ public class ActualTeleOpBackup extends LinearOpMode {
                 double fRPower = forward - strafe - rotate; // - strafe
                 setDrivePowers(bLPower, bRPower, fLPower, fRPower);
                 // reset speed variables
-                if (gamepad2.left_trigger > 0.2 || gamepad2.x) {
-                    claw.setPosition(.56);
+
+                if (gamepad2.left_trigger > 0.1 || gamepad2.x) {
+                    claw.setPosition(0.74);
+                    //claw.setPower(1);
                     clawopen = true;
 
-                } else if (gamepad2.right_trigger > 0.2 || gamepad2.b) {
-                    claw.setPosition(0);
+                } else if (gamepad2.right_trigger > 0.1 || gamepad2.b) {
+                    claw.setPosition(1);
+                    //claw.setPower(-1);
+
                     clawopen = false;
                 }
+                //else{
+                //  claw.setPower(0);
+
+                //}
 
                 if (arms > 0.2) {
                     arm_left.setPower(1);
@@ -113,8 +122,8 @@ public class ActualTeleOpBackup extends LinearOpMode {
                     arm_right.setPower(0.0);
                 }
                 if (slides > 0.2) {
-                    slide_left.setPower(0.75);
-                    slide_right.setPower(0.75);
+                    slide_left.setPower(0.8);
+                    slide_right.setPower(0.8);
                 } else if (slides < -0.2) {
                     slide_left.setPower(-0.75);
                     slide_right.setPower(-0.75);
@@ -137,3 +146,5 @@ public class ActualTeleOpBackup extends LinearOpMode {
     }
 
 }
+
+
