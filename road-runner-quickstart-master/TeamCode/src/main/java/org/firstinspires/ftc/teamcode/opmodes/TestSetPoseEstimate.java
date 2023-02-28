@@ -85,7 +85,7 @@ public class TestSetPoseEstimate extends LinearOpMode {
                     // Run your action in here!
                     claw.setPosition(CLOSED_CLAW);
                 })
-                .splineToSplineHeading(new Pose2d(-36, -24, Math.toRadians(180)), Math.toRadians(45))
+                .splineToSplineHeading(new Pose2d(-36, -12, Math.toRadians(180)), Math.toRadians(45))
                 .addDisplacementMarker(25, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
@@ -108,7 +108,7 @@ public class TestSetPoseEstimate extends LinearOpMode {
                     arm.idle();
                     claw.setPosition(OPEN_CLAW);
                 })
-                .splineToConstantHeading(new Vector2d(10, 10), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-36, -37, Math.toRadians(180)), Math.toRadians(45))
                 .build();
 
         // Define a 1.5 second wait time
@@ -157,7 +157,7 @@ public class TestSetPoseEstimate extends LinearOpMode {
                     if (waitTimer1.seconds() >= 1) {
                         currentState = State.TRAJECTORY_2;
                         lift.setTarget(100);
-                        drive.setPoseEstimate(new Pose2d(new Vector2d(0, 0), Math.toRadians(0)));
+                        drive.setPoseEstimate(new Pose2d(new Vector2d(-35, -61), Math.toRadians(180)));
                         drive.followTrajectoryAsync(trajectory2);
                     }
                     break;
