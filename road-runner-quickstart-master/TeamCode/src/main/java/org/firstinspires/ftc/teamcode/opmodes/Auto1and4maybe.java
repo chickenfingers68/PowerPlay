@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.mechanisms.Lift;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 /**
  * This opmode explains how you follow multiple trajectories in succession, asynchronously. This
@@ -36,7 +37,7 @@ public class Auto1and4maybe extends LinearOpMode {
 
     private Servo claw;
 
-    double OPEN_CLAW = 0.74;
+    double OPEN_CLAW = 0.82;
     double CLOSED_CLAW = 1.0;
     // This enum defines our "state"
     // This is essentially just defines the possible steps our program will take
@@ -64,7 +65,7 @@ public class Auto1and4maybe extends LinearOpMode {
     // Define our start pose
     // This assumes we start at x: 15, y: 10, heading: 180 degrees
     Pose2d startPose = new Pose2d(-35, -61, Math.toRadians(90));
-
+    int counter = 0;
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize our lift
@@ -85,7 +86,7 @@ public class Auto1and4maybe extends LinearOpMode {
                     // Run your action in here!
                     claw.setPosition(CLOSED_CLAW);
                 })
-                .splineToSplineHeading(new Pose2d(-28.5, 2, Math.toRadians(180)), Math.toRadians(45))
+                .splineToSplineHeading(new Pose2d(-28, 1, Math.toRadians(180)), Math.toRadians(45))
                 .addDisplacementMarker(25, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
@@ -119,12 +120,14 @@ public class Auto1and4maybe extends LinearOpMode {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
                     arm.idle();
+                    arm.setPower(1);
+                    claw.setPosition(CLOSED_CLAW);
                 })
-                .splineToConstantHeading(new Vector2d(-63.5, -6), Math.toRadians(175))
+                .splineToConstantHeading(new Vector2d(-61, -5), Math.toRadians(167))
                 .addDisplacementMarker(() -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
-                    drive.setPoseEstimate(new Pose2d(-63.5, -12, Math.toRadians(180)));
+                    claw.setPosition(0.6);
                 })
                 .build();
 
@@ -132,8 +135,9 @@ public class Auto1and4maybe extends LinearOpMode {
 
         // Fourth trajectory
         // Ensure that we call trajectory3.end() as the start for this one
-        Trajectory trajectory4 = drive.trajectoryBuilder(new Pose2d(-63.5, -12, Math.toRadians(180)))
-                .splineToConstantHeading(new Vector2d(-51, -12), Math.toRadians(0))
+        TrajectorySequence trajectory4 = drive.trajectorySequenceBuilder(new Pose2d(-61, -12, Math.toRadians(180)))
+                .lineToConstantHeading(new Vector2d(-57, -12))
+                .lineToConstantHeading(new Vector2d(-38, -16))
                 .addTemporalMarker(1, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
@@ -144,11 +148,11 @@ public class Auto1and4maybe extends LinearOpMode {
         // Fifth trajectory
         // Ensure that we call trajectory4.end() as the start for this one
         Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end())
-                .splineToConstantHeading(new Vector2d(-30, 1), Math.toRadians(90))
+                .lineToConstantHeading(new Vector2d(-30, -5.5))
                 .addDisplacementMarker(20, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
-                    arm.setPower(-0.3);
+                    arm.setPower(-1);
                 })
                 .addDisplacementMarker(20, () -> {
                     // This marker runs 20 inches into the trajectory
@@ -192,6 +196,7 @@ public class Auto1and4maybe extends LinearOpMode {
                     }
                     break;
                 case WAIT_1:
+                    counter++;
                     if(timer.seconds() > 0.2){
                         claw.setPosition(OPEN_CLAW);
                     }
@@ -228,16 +233,17 @@ public class Auto1and4maybe extends LinearOpMode {
                     break;
                 case WAIT_2:
                     if (timer.seconds() > 0.1){
-                        claw.setPosition(CLOSED_CLAW);
                     }
-                    if (timer.seconds() > 1){
+                    if (timer.seconds() > 1.3){
+                        claw.setPosition(CLOSED_CLAW);
                         arm.setPower(-0.2);
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on to the TURN_2 state
                     if (waitTimer1.seconds() >= waitTime1) {
                         currentState = State.TRAJECTORY_4;
-                        drive.followTrajectoryAsync(trajectory4);
+                        drive.setPoseEstimate(new Pose2d(-61, -12, Math.toRadians(180)));
+                        drive.followTrajectorySequenceAsync(trajectory4);
                     }
                     break;
                 case TRAJECTORY_4:
@@ -265,12 +271,13 @@ public class Auto1and4maybe extends LinearOpMode {
                         claw.setPosition(OPEN_CLAW);
                     }
                     if(timer.seconds() < 1){
-                        arm.setPower(1);
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on to the TURN_2 state
                     if (waitTimer1.seconds() >= waitTime1) {
                         currentState = State.IDLE;
+                        drive.setPoseEstimate(new Pose2d(new Vector2d(-28, 1), Math.toRadians(180)));
+                        arm.setPower(-0.2);
                     }
                     break;
 

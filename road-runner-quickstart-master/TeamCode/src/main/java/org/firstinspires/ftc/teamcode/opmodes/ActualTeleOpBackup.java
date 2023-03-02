@@ -96,7 +96,7 @@ public class ActualTeleOpBackup extends LinearOpMode {
                 // reset speed variables
 
                 if (gamepad2.left_trigger > 0.1 || gamepad2.x) {
-                    claw.setPosition(0.74);
+                    claw.setPosition(0.82);
                     //claw.setPower(1);
                     clawopen = true;
 
