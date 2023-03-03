@@ -148,7 +148,7 @@ public class Auto1and4maybe extends LinearOpMode {
         // Fifth trajectory
         // Ensure that we call trajectory4.end() as the start for this one
         Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end())
-                .lineToConstantHeading(new Vector2d(-30, -5.5))
+                .lineToConstantHeading(new Vector2d(-30, -6.5))
                 .addDisplacementMarker(20, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
@@ -287,6 +287,7 @@ public class Auto1and4maybe extends LinearOpMode {
                     // Do nothing in IDLE
                     // currentState does not change once in IDLE
                     // This concludes the autonomous program
+                    arm.setPower(0);
                     break;
             }
 

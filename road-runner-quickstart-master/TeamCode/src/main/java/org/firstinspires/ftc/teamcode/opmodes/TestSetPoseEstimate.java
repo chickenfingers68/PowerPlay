@@ -63,7 +63,7 @@ public class TestSetPoseEstimate extends LinearOpMode {
 
     // Define our start pose
     // This assumes we start at x: 15, y: 10, heading: 180 degrees
-    Pose2d startPose = new Pose2d(-35, -61, Math.toRadians(90));
+    Pose2d startPose = new Pose2d(-35, -61, Math.toRadians(0));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -80,17 +80,7 @@ public class TestSetPoseEstimate extends LinearOpMode {
 
         // Let's define our trajectories
         Trajectory trajectory1 = drive.trajectoryBuilder(startPose)
-                .addDisplacementMarker(0.5, () -> {
-                    // This marker runs 20 inches into the trajectory
-                    // Run your action in here!
-                    claw.setPosition(CLOSED_CLAW);
-                })
-                .splineToSplineHeading(new Pose2d(-36, -12, Math.toRadians(180)), Math.toRadians(45))
-                .addDisplacementMarker(25, () -> {
-                    // This marker runs 20 inches into the trajectory
-                    // Run your action in here!
-                    arm.setPower(-.3);
-                })
+                .lineTo(new Vector2d(-35, -12))
                 .build();
 
         // Second trajectory
@@ -138,37 +128,13 @@ public class TestSetPoseEstimate extends LinearOpMode {
                     // Check if the drive class is busy following the trajectory
                     // If not, move onto the next state, WAIT_1
                     if (!drive.isBusy()) {
-                        currentState = State.WAIT_1;
+                        currentState = State.IDLE;
                         // Start the wait timer once we switch to the next state
                         // This is so we can track how long we've been in the WAIT_1 state
                         waitTimer1.reset();
                         timer.reset();
                     }
                     break;
-                case WAIT_1:
-                    if(timer.seconds() > 0.2){
-                        claw.setPosition(OPEN_CLAW);
-                    }
-                    if(timer.seconds() > 0.3){
-                        arm.setPower(.35);
-                    }
-                    // Check if the timer has exceeded the specified wait time
-                    // If so, move on
-                    if (waitTimer1.seconds() >= 1) {
-                        currentState = State.TRAJECTORY_2;
-                        lift.setTarget(100);
-                        drive.setPoseEstimate(new Pose2d(new Vector2d(-35, -61), Math.toRadians(180)));
-                        drive.followTrajectoryAsync(trajectory2);
-                    }
-                    break;
-                case TRAJECTORY_2:
-                    // Check if the drive class is busy following the trajectory
-                    // Move on to the next state, TURN_1, once finished
-                    if (!drive.isBusy()) {
-                        currentState = State.IDLE;
-                    }
-                    break;
-
 
 
                 case IDLE:
