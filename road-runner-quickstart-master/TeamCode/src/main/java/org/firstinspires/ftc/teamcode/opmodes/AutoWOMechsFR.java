@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name = "AutoWOMechsFR")
- //@Disabled
+ @Disabled
 public class AutoWOMechsFR extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

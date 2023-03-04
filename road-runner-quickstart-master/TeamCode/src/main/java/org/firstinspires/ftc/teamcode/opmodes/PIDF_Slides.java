@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Config
 @TeleOp
-//@Disabled
+@Disabled
 public class PIDF_Slides extends OpMode{
     private PIDController controller;
 

@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -33,6 +34,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
  * opmode only serves as an initial starting point.
  */
 @Autonomous(name = "1and4test", group = "advanced")
+@Disabled
 public class Auto1and4newmaybe extends LinearOpMode {
 
     private Servo claw;
@@ -274,8 +276,11 @@ public class Auto1and4newmaybe extends LinearOpMode {
                     lift.setTarget(2400);
                 })
                 .build();
+        //not done
+        TrajectorySequence leftPark = drive.trajectorySequenceBuilder(trajectory7.end())
+                .splineToConstantHeading(new Vector2d(-32, -8), Math.toRadians(180))
+            .build();
         // Define a 1.5 second wait time
-        double waitTime1 = 1.5;
         ElapsedTime timer = new ElapsedTime();
         ElapsedTime waitTimer1 = new ElapsedTime();
 
