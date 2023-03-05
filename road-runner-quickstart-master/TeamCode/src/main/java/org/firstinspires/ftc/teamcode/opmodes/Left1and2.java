@@ -41,8 +41,8 @@ import java.util.ArrayList;
  * to supercharge your code. This can be much cleaner by abstracting many of these things. This
  * opmode only serves as an initial starting point.
  */
-@Autonomous(name = "dont run (left)", group = "advanced")
-public class Auto1and4newNew extends LinearOpMode {
+@Autonomous(name = "Left 1+2", group = "advanced")
+public class Left1and2 extends LinearOpMode {
 
     private Servo claw;
 
@@ -95,12 +95,6 @@ public class Auto1and4newNew extends LinearOpMode {
         WAIT_3,         // Then we're gonna wait a second to score
         TRAJECTORY_6,
         TRAJECTORY_7,
-        TRAJECTORY_8,
-        TRAJECTORY_9,
-        TRAJECTORY_10,
-        TRAJECTORY_11,
-        TRAJECTORY_12,
-        TRAJECTORY_13,
         WAIT_4,
         WAIT_5,
         WAIT_6,
@@ -561,65 +555,19 @@ public class Auto1and4newNew extends LinearOpMode {
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on
-                    if (waitTimer1.seconds() >= 1.3) {
-                        currentState = State.TRAJECTORY_6;
-                        drive.setPoseEstimate(new Pose2d(new Vector2d(-28.6, 2), Math.toRadians(180)));
-                        //arm.setPower(-0.2);
-                        drive.followTrajectoryAsync(trajectory6);
-                    }
-                    break;
-                case TRAJECTORY_6:
-                    // Check if the drive class is busy following the trajectory
-                    // Move on to the next state, TURN_1, once finished
-                    if (!drive.isBusy()) {
-                        currentState = State.WAIT_5;
-                        waitTimer1.reset();
-                        timer.reset();
-                    }
-                    break;
-                case WAIT_5:
-                    if (timer.seconds() > 0.1){
-                    }
-                    if (timer.seconds() > 0.3){
-                        claw.setPosition(CLOSED_CLAW);
-                        arm.setPower(-0.2);
-                    }
-                    // Check if the timer has exceeded the specified wait time
-                    // If so, move on to the TURN_2 state
-                    if (waitTimer1.seconds() >= 1) {
-                        currentState = State.TRAJECTORY_7;
-                        drive.setPoseEstimate(new Pose2d(-59.8, -12, Math.toRadians(180)));
-                        drive.followTrajectorySequenceAsync(trajectory7);
-                    }
-                    break;
-                case TRAJECTORY_7:
-                    // Check if the drive class is busy following the trajectory
-                    // Move on to the next state, TURN_1, once finished
-                    arm.setPower(-0.2);
-                    if (!drive.isBusy()) {
-                        currentState = State.WAIT_6;
-                        waitTimer1.reset();
-                        timer.reset();
-                    }
-                    break;
-
-                case WAIT_6:
-                    if(timer.seconds() > 0.2){
-                        claw.setPosition(OPEN_CLAW);
-                    }
-                    if(timer.seconds() > 0.3){
-                        arm.setPower(.35);
-                    }
-                    if(timer.seconds() > 1.1){
-                        lift.setTarget(100);
-                    }
-                    // Check if the timer has exceeded the specified wait time
-                    // If so, move on
-                    if (waitTimer1.seconds() >= 1.3) {
+                    if (waitTimer1.seconds() >= 1.3) {  
                         currentState = State.IDLE;
                         drive.setPoseEstimate(new Pose2d(new Vector2d(-28.6, 2), Math.toRadians(180)));
                         //arm.setPower(-0.2);
-                        drive.followTrajectorySequenceAsync(leftPark);
+                        if(location == 1){
+                            drive.followTrajectorySequenceAsync(leftPark);
+                        }
+                        else if (location == 2){
+                            drive.followTrajectorySequenceAsync(midPark);
+                        }
+                        else if (location == 3){
+                            drive.followTrajectorySequenceAsync(rightPark);
+                        }
                     }
                     break;
 

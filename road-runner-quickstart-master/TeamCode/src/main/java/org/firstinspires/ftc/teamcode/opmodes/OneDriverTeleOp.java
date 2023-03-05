@@ -81,7 +81,7 @@ public class OneDriverTeleOp extends LinearOpMode {
         //true = open
         //false = close
         boolean clawopen = false;
-        claw.setPosition(0);
+        claw.setPosition(1);
         waitForStart();
         if (opModeIsActive()) {
             // Put run blocks here.
@@ -90,13 +90,13 @@ public class OneDriverTeleOp extends LinearOpMode {
                 double forward;
                 double strafe;
                 if(-1 * gamepad2.left_stick_y > 0.2 || -1 * gamepad2.left_stick_y < -0.2){
-                    forward = -1 * gamepad2.left_stick_y;
+                    forward = -0.7 * gamepad2.left_stick_y;
                 }
                 else{
                     forward = 0;
                 }
                 if(gamepad2.left_stick_x > 0.2 || gamepad2.left_stick_x < -0.2){
-                    strafe = gamepad2.left_stick_x;
+                    strafe = 0.7 * gamepad2.left_stick_x;
                 }
                 else{
                     strafe = 0;
@@ -112,11 +112,11 @@ public class OneDriverTeleOp extends LinearOpMode {
                 setDrivePowers(bLPower, bRPower, fLPower, fRPower);
                 // reset speed variables
                 if (gamepad2.x) {
-                    claw.setPosition(.48);
+                    claw.setPosition(0.82);
                     clawopen = true;
 
                 } else if (gamepad2.b) {
-                    claw.setPosition(0);
+                    claw.setPosition(1);
                     clawopen = false;
                 }
 

@@ -31,7 +31,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "RIGHT", preselectTeleOp = "ActualTeleOp")
+@Autonomous(name = "RIGHTold", preselectTeleOp = "ActualTeleOp")
 @Disabled
 public class RIGHT extends LinearOpMode {
     //Time

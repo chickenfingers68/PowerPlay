@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import android.annotation.SuppressLint;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -9,10 +11,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.mechanisms.Lift;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
+import java.util.ArrayList;
 
 /**
  * This opmode explains how you follow multiple trajectories in succession, asynchronously. This
@@ -32,13 +41,42 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
  * to supercharge your code. This can be much cleaner by abstracting many of these things. This
  * opmode only serves as an initial starting point.
  */
-@Autonomous(name = "blue????", group = "advanced")
+@Autonomous(name = "dont run (right)", group = "advanced")
 public class AutoBlue1and4maybe extends LinearOpMode {
 
     private Servo claw;
 
     double OPEN_CLAW = 0.82;
     double CLOSED_CLAW = 1.0;
+
+    //Cameras
+    OpenCvCamera camera;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
+    static final double FEET_PER_METER = 3.28084;
+
+    // Lens intrinsics
+    // UNITS ARE PIXELS
+    // NOTE: this calibration is for the C920 webcam at 800x448.
+    // You will need to do your own calibration for other configurations!
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
+
+    // UNITS ARE METERS
+    double tagsize = 0.266;
+
+    //6:1
+    //16:2
+    //12:3
+    int LeftTag = 6; // Tag ID 18 from the 36h11 family
+    int RightTag = 12;
+    int MiddleTag = 16;
+    int location = 0;
+
+    AprilTagDetection tagOfInterest = null;
+
     // This enum defines our "state"
     // This is essentially just defines the possible steps our program will take
     enum State {
@@ -57,12 +95,6 @@ public class AutoBlue1and4maybe extends LinearOpMode {
         WAIT_3,         // Then we're gonna wait a second to score
         TRAJECTORY_6,
         TRAJECTORY_7,
-        TRAJECTORY_8,
-        TRAJECTORY_9,
-        TRAJECTORY_10,
-        TRAJECTORY_11,
-        TRAJECTORY_12,
-        TRAJECTORY_13,
         WAIT_4,
         WAIT_5,
         WAIT_6,
@@ -97,15 +129,15 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                 .addDisplacementMarker(0.5, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
-                    arm.setPower(-0.05);
+                    //arm.setPower(-0.05);
                     claw.setPosition(CLOSED_CLAW);
                 })
                 .splineToSplineHeading(new Pose2d(29, 1, Math.toRadians(2.5)), Math.toRadians(135))
                 .addDisplacementMarker(25, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
-                    //lift.setTarget(2400);
-                    //arm.setPower(-.3);
+                    lift.setTarget(2400);
+                    arm.setPower(-.3);
                 })
                 .build();
 
@@ -115,28 +147,28 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                 .addTemporalMarker(0.25, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
-                    //arm.setPower(-0.2);
-                    //claw.setPosition(OPEN_CLAW);
+                    arm.setPower(-0.2);
+                    claw.setPosition(OPEN_CLAW);
                 })
                 .addTemporalMarker(1, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
                     arm.idle();
-                    //claw.setPosition(OPEN_CLAW);
+                    claw.setPosition(OPEN_CLAW);
                 })
                 .splineToConstantHeading(new Vector2d(45, -12), Math.toRadians(0))
-                .addDisplacementMarker(15, () -> {
+                .addDisplacementMarker(20, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
                     arm.idle();
-                    //arm.setPower(1);
-                    //claw.setPosition(CLOSED_CLAW);
+                    arm.setPower(1);
+                    claw.setPosition(CLOSED_CLAW);
                 })
-                .splineToConstantHeading(new Vector2d(62, -8), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(61, -5.), Math.toRadians(0))
                 .addDisplacementMarker(() -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
-                    //claw.setPosition(0.6);
+                    claw.setPosition(0.6);
                 })
                 .build();
 
@@ -146,21 +178,21 @@ public class AutoBlue1and4maybe extends LinearOpMode {
         // Ensure that we call trajectory3.end() as the start for this one
         TrajectorySequence trajectory3 = drive.trajectorySequenceBuilder(new Pose2d(61, -12, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(57, -12))
-                .splineToConstantHeading(new Vector2d(29, 1.5), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(29, -0.5), Math.toRadians(90))
                 .addTemporalMarker(1, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
-                    //arm.setPower(0.2);
+                    arm.setPower(0.2);
                 })
                 .addDisplacementMarker(20, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
-                    //arm.setPower(-0.35);
+                    arm.setPower(-0.35);
                 })
                 .addDisplacementMarker(20, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
-                    //lift.setTarget(2400);
+                    lift.setTarget(2400);
                 })
                 .build();
 
@@ -169,28 +201,28 @@ public class AutoBlue1and4maybe extends LinearOpMode {
 
         // Second trajectory
         // Ensure that we call trajectory1.end() as the start for this one
-        Trajectory trajectory4 = drive.trajectoryBuilder(trajectory3.end())
+        Trajectory trajectory4 = drive.trajectoryBuilder(new Pose2d(29, 1, Math.toRadians(0)))
                 .addTemporalMarker(0.25, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
-                    //arm.setPower(-0.2);
-                    //claw.setPosition(OPEN_CLAW);
+                    arm.setPower(-0.2);
+                    claw.setPosition(OPEN_CLAW);
                 })
                 .addTemporalMarker(1, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
                     arm.idle();
-                    //claw.setPosition(OPEN_CLAW);
+                    claw.setPosition(OPEN_CLAW);
                 })
                 .splineToConstantHeading(new Vector2d(41, -12), Math.toRadians(0))
                 .addDisplacementMarker(15, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
                     arm.idle();
-                    //arm.setPower(1);
-                    //claw.setPosition(CLOSED_CLAW);
+                    arm.setPower(1);
+                    claw.setPosition(CLOSED_CLAW);
                 })
-                .splineToConstantHeading(new Vector2d(61, -11.75), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(61, -9.5), Math.toRadians(0))
                 .addDisplacementMarker(() -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
@@ -204,48 +236,48 @@ public class AutoBlue1and4maybe extends LinearOpMode {
 
         TrajectorySequence trajectory5 = drive.trajectorySequenceBuilder(new Pose2d(61, -12, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(57, -12))
-                .splineToConstantHeading(new Vector2d(29, 1.5), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(29, -0.5), Math.toRadians(90))
                 .addTemporalMarker(1, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
-                    //arm.setPower(0.2);
+                    arm.setPower(0.2);
                 })
                 .addDisplacementMarker(20, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
-                    //arm.setPower(-1);
+                    arm.setPower(-1);
                 })
                 .addDisplacementMarker(20, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
-                    //lift.setTarget(2400);
+                    lift.setTarget(2400);
                 })
                 .build();
 
         // Second trajectory
         // Ensure that we call trajectory1.end() as the start for this one
-        Trajectory trajectory6 = drive.trajectoryBuilder(trajectory5.end())
+        Trajectory trajectory6 = drive.trajectoryBuilder(new Pose2d(29, 1, Math.toRadians(0)))
                 .addTemporalMarker(0.25, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
-                    //arm.setPower(-0.2);
-                    //claw.setPosition(OPEN_CLAW);
+                    arm.setPower(-0.2);
+                    claw.setPosition(OPEN_CLAW);
                 })
                 .addTemporalMarker(1, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
                     arm.idle();
-                    //claw.setPosition(OPEN_CLAW);
+                    claw.setPosition(OPEN_CLAW);
                 })
                 .splineToConstantHeading(new Vector2d(45, -12), Math.toRadians(0))
                 .addDisplacementMarker(15, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
                     arm.idle();
-                    //arm.setPower(1);
-                    //claw.setPosition(CLOSED_CLAW);
+                    arm.setPower(1);
+                    claw.setPosition(CLOSED_CLAW);
                 })
-                .splineToConstantHeading(new Vector2d(61, -12.), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(61, -9), Math.toRadians(0))
                 .addDisplacementMarker(() -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
@@ -257,42 +289,117 @@ public class AutoBlue1and4maybe extends LinearOpMode {
 
         TrajectorySequence trajectory7 = drive.trajectorySequenceBuilder(new Pose2d(61, -12, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(57, -12))
-                .splineToConstantHeading(new Vector2d(30, 1.5), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(30, .5), Math.toRadians(90))
                 .addTemporalMarker(1, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
-                    //arm.setPower(0.2);
+                    arm.setPower(0.2);
                 })
                 .addDisplacementMarker(20, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
-                    //arm.setPower(-1);
+                    arm.setPower(-1);
                 })
                 .addDisplacementMarker(20, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
-                    //lift.setTarget(2400);
+                    lift.setTarget(2400);
                 })
                 .build();
 
-        TrajectorySequence leftPark = drive.trajectorySequenceBuilder(trajectory7.end())
-                .lineTo(new Vector2d(56, -18))
+        TrajectorySequence rightPark = drive.trajectorySequenceBuilder(trajectory7.end())
+                .lineTo(new Vector2d(56, -12))
                 .build();
 
         TrajectorySequence midPark = drive.trajectorySequenceBuilder(trajectory7.end())
                 .lineTo(new Vector2d(36, -12))
                 .build();
 
-        TrajectorySequence rightPark = drive.trajectorySequenceBuilder(trajectory7.end())
-                .lineTo(new Vector2d(36, -12))
+        TrajectorySequence leftPark = drive.trajectorySequenceBuilder(trajectory7.end())
+                .lineTo(new Vector2d(32, -12))
                 .splineToConstantHeading(new Vector2d(12, -12), Math.toRadians(0))
                 .build();
 
-        // Define a 1.5 second wait time
-        double waitTime1 = 1.5;
         ElapsedTime timer = new ElapsedTime();
         ElapsedTime waitTimer1 = new ElapsedTime();
 
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+
+        camera.setPipeline(aprilTagDetectionPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
+        });
+
+        telemetry.setMsTransmissionInterval(50);
+
+        /*
+         * The INIT-loop:
+         * This REPLACES waitForStart!
+         */
+        while (!isStarted() && !isStopRequested()) {
+            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+            if (currentDetections.size() != 0) {
+                boolean tagFound = false;
+
+                for (AprilTagDetection tag : currentDetections) {
+                    if (tag.id == LeftTag || tag.id == RightTag || tag.id == MiddleTag) {
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
+                    }
+                }
+
+                if (tagFound) {
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterest);
+                } else {
+                    telemetry.addLine("Don't see tag of interest :(");
+
+                    if (tagOfInterest == null) {
+                        telemetry.addLine("(The tag has never been seen)");
+                    } else {
+                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                        tagToTelemetry(tagOfInterest);
+                    }
+                }
+
+            } else {
+                telemetry.addLine("Don't see tag of interest :(");
+
+                if (tagOfInterest == null) {
+                    telemetry.addLine("(The tag has never been seen)");
+                } else {
+                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                    tagToTelemetry(tagOfInterest);
+                }
+
+            }
+            /* Actually do something useful */
+            if (tagOfInterest == null || tagOfInterest.id == LeftTag) {
+                location = 1;
+                telemetry.addLine("LEFT");
+            } else if (tagOfInterest.id == RightTag) {
+                location = 3;
+                telemetry.addLine("Right");
+            } else {
+                location = 2;
+                telemetry.addLine("Middle");
+            }
+
+            telemetry.update();
+            sleep(20);
+        }
         waitForStart();
 
         if (isStopRequested()) return;
@@ -326,17 +433,17 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                 case WAIT_1:
                     counter++;
                     if(timer.seconds() > 0.2){
-                        //claw.setPosition(OPEN_CLAW);
+                        claw.setPosition(OPEN_CLAW);
                     }
                     if(timer.seconds() > 0.3){
-                        //arm.setPower(.35);
+                        arm.setPower(.35);
                     }
-                    if(timer.seconds() > 0.75){
-                        //lift.setTarget(100);
+                    if(timer.seconds() > 1.1){
+                        lift.setTarget(100);
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on
-                    if (waitTimer1.seconds() >= 1.5) {
+                    if (waitTimer1.seconds() >= 1.3) {
                         currentState = State.TRAJECTORY_2;
                         drive.followTrajectoryAsync(trajectory2);
                     }
@@ -353,13 +460,13 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                 case WAIT_1a:
                     if (timer.seconds() > 0.1){
                     }
-                    if (timer.seconds() > 1.3){
-                        //claw.setPosition(CLOSED_CLAW);
-                        //arm.setPower(-0.2);
+                    if (timer.seconds() > 0.5){
+                        claw.setPosition(CLOSED_CLAW);
+                        arm.setPower(-0.2);
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on to the TURN_2 state
-                    if (waitTimer1.seconds() >= 1.5) {
+                    if (waitTimer1.seconds() >= 1) {
                         currentState = State.TRAJECTORY_3;
                         drive.setPoseEstimate(new Pose2d(61, -12, Math.toRadians(0)));
                         drive.followTrajectorySequenceAsync(trajectory3);
@@ -380,8 +487,8 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     if (timer.seconds() > 0.1){
                     }
                     if (timer.seconds() > 1.3){
-                        //claw.setPosition(CLOSED_CLAW);
-                        //arm.setPower(-0.2);
+                        claw.setPosition(CLOSED_CLAW);
+                        arm.setPower(-0.2);
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on to the TURN_2 state
@@ -395,15 +502,18 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                 */
                 case WAIT_2:
                     if(timer.seconds() < 0.2){
-                        //claw.setPosition(OPEN_CLAW);
+                        claw.setPosition(OPEN_CLAW);
                     }
-                    if(timer.seconds() > 0.75){
-                        //lift.setTarget(100);
+                    if(timer.seconds() > 0.3){
+                        arm.setPower(.35);
+                    }
+                    if(timer.seconds() > 1.1){
+                        lift.setTarget(100);
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on to the TURN_2 state
 
-                    if (waitTimer1.seconds() >= 1.5) {
+                    if (waitTimer1.seconds() >= 1.3) {
                         currentState = State.TRAJECTORY_4;
                         drive.setPoseEstimate(new Pose2d(new Vector2d(29, 1), Math.toRadians(0)));
                         //arm.setPower(-0.2);
@@ -423,14 +533,15 @@ public class AutoBlue1and4maybe extends LinearOpMode {
 
                 case WAIT_3:
                     if (timer.seconds() > 0.1){
+                        arm.setPower(0.2);
                     }
-                    if (timer.seconds() > 1.3){
-                        //claw.setPosition(CLOSED_CLAW);
-                        //arm.setPower(-0.2);
+                    if (timer.seconds() > 0.5){
+                        claw.setPosition(CLOSED_CLAW);
+                        arm.setPower(-0.2);
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on to the TURN_2 state
-                    if (waitTimer1.seconds() >= 1.5) {
+                    if (waitTimer1.seconds() >= 1) {
                         currentState = State.TRAJECTORY_5;
                         drive.setPoseEstimate(new Pose2d(61, -12, Math.toRadians(0)));
                         drive.followTrajectorySequenceAsync(trajectory5);
@@ -449,15 +560,18 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     }
                     break;
                 case WAIT_4:
-                    if(timer.seconds() < 0.2){
-                        //claw.setPosition(OPEN_CLAW);
+                    if(timer.seconds() > 0.2){
+                        claw.setPosition(OPEN_CLAW);
                     }
-                    if(timer.seconds() > 0.75){
-                        //lift.setTarget(100);
+                    if(timer.seconds() > 0.3){
+                        arm.setPower(.35);
+                    }
+                    if(timer.seconds() > 1.1){
+                        lift.setTarget(100);
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on to the TURN_2 state
-                    if (waitTimer1.seconds() >= 1.5) {
+                    if (waitTimer1.seconds() >= 1.3) {
                         currentState = State.TRAJECTORY_6;
                         drive.setPoseEstimate(new Pose2d(new Vector2d(29, 1), Math.toRadians(0)));
                         //arm.setPower(-0.2);
@@ -476,13 +590,13 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                 case WAIT_5:
                     if (timer.seconds() > 0.1){
                     }
-                    if (timer.seconds() > 1.3){
+                    if (timer.seconds() > 0.3){
                         //claw.setPosition(CLOSED_CLAW);
                         //arm.setPower(-0.2);
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on to the TURN_2 state
-                    if (waitTimer1.seconds() >= 1.5) {
+                    if (waitTimer1.seconds() >= 1) {
                         currentState = State.TRAJECTORY_7;
                         drive.setPoseEstimate(new Pose2d(61, -12, Math.toRadians(0)));
                         drive.followTrajectorySequenceAsync(trajectory7);
@@ -499,15 +613,18 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     break;
 
                 case WAIT_6:
-                    if(timer.seconds() < 0.2){
-                        //claw.setPosition(OPEN_CLAW);
+                    if(timer.seconds() > 0.2){
+                        claw.setPosition(OPEN_CLAW);
                     }
-                    if(timer.seconds() > 0.75){
-                        //lift.setTarget(100);
+                    if(timer.seconds() > 0.3){
+                        arm.setPower(.35);
+                    }
+                    if(timer.seconds() > 1.1){
+                        lift.setTarget(100);
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on to the TURN_2 state
-                    if (waitTimer1.seconds() >= 1.5) {
+                    if (waitTimer1.seconds() >= 1.3) {
                         currentState = State.IDLE;
                         drive.setPoseEstimate(new Pose2d(new Vector2d(29, 1), Math.toRadians(0)));
                         //arm.setPower(-0.2);
@@ -545,5 +662,16 @@ public class AutoBlue1and4maybe extends LinearOpMode {
             telemetry.addData("target: ", lift.getTarget());
             telemetry.update();
         }
+    }
+
+    @SuppressLint("DefaultLocale")
+    void tagToTelemetry(AprilTagDetection detection) {
+        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x * FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y * FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z * FEET_PER_METER));
+        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
+        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
+        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 }
