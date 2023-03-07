@@ -226,7 +226,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                 .addDisplacementMarker(() -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
-                    //claw.setPosition(0.6);
+                    claw.setPosition(OPEN_CLAW);
                 })
                 .build();
 

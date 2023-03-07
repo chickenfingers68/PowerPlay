@@ -122,11 +122,11 @@ public class ActualTeleOpBackup extends LinearOpMode {
                     arm_right.setPower(0.0);
                 }
                 if (slides > 0.2) {
-                    slide_left.setPower(0.8);
-                    slide_right.setPower(0.8);
+                    slide_left.setPower(0.85);
+                    slide_right.setPower(0.85);
                 } else if (slides < -0.2) {
-                    slide_left.setPower(-0.75);
-                    slide_right.setPower(-0.75);
+                    slide_left.setPower(-0.775);
+                    slide_right.setPower(-0.775);
                 } else {
                     slide_left.setPower(0.04);
                     slide_right.setPower(0.04);

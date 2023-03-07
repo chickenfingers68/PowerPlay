@@ -555,7 +555,7 @@ public class Left1and2 extends LinearOpMode {
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on
-                    if (waitTimer1.seconds() >= 1.3) {  
+                    if (waitTimer1.seconds() >= 1.3) {
                         currentState = State.IDLE;
                         drive.setPoseEstimate(new Pose2d(new Vector2d(-28.6, 2), Math.toRadians(180)));
                         //arm.setPower(-0.2);
