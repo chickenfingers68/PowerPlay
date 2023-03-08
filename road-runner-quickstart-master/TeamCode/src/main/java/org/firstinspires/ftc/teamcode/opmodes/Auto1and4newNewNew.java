@@ -41,7 +41,7 @@ import java.util.ArrayList;
  * to supercharge your code. This can be much cleaner by abstracting many of these things. This
  * opmode only serves as an initial starting point.
  */
-@Autonomous(name = "dont run (left)", group = "advanced")
+@Autonomous(name = "fdBJFbLABsEHLgbl", group = "advanced")
 public class Auto1and4newNewNew extends LinearOpMode {
 
     private Servo claw;
@@ -187,7 +187,7 @@ public class Auto1and4newNewNew extends LinearOpMode {
         // Ensure that we call trajectory3.end() as the start for this one
         TrajectorySequence trajectory3 = drive.trajectorySequenceBuilder(new Pose2d(-60.3, -12, Math.toRadians(180)))
                 .lineToConstantHeading(new Vector2d(-57, -12))
-                .splineToConstantHeading(new Vector2d(-30, -.75 ), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-30, 0 ), Math.toRadians(90))
                 .addTemporalMarker(1, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
@@ -247,7 +247,7 @@ public class Auto1and4newNewNew extends LinearOpMode {
 
         TrajectorySequence trajectory5 = drive.trajectorySequenceBuilder(new Pose2d(-59.8, -12, Math.toRadians(180)))
                 .lineToConstantHeading(new Vector2d(-57, -12))
-                .splineToConstantHeading(new Vector2d(-29.2, .25), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-29.5, 1), Math.toRadians(90))
                 .addTemporalMarker(1, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
@@ -293,7 +293,7 @@ public class Auto1and4newNewNew extends LinearOpMode {
                     // Run your action in here!
                     claw.setPosition(OPEN_CLAW);
                 })
-                .splineToConstantHeading(new Vector2d(-59.8, -12.5), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-59.2, -12.5), Math.toRadians(180))
 
                 .build();
 
@@ -301,7 +301,7 @@ public class Auto1and4newNewNew extends LinearOpMode {
 
         TrajectorySequence trajectory7 = drive.trajectorySequenceBuilder(new Pose2d(-59.8, -12, Math.toRadians(180)))
                 .lineToConstantHeading(new Vector2d(-57, -12))
-                .splineToConstantHeading(new Vector2d(-29.1, 2.5), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-29.1, 1.75), Math.toRadians(90))
                 .addTemporalMarker(1, () -> {
                     // This marker runs two seconds into the trajectory
                     // Run your action in here!
@@ -310,7 +310,7 @@ public class Auto1and4newNewNew extends LinearOpMode {
                 .addDisplacementMarker(20, () -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
-                    arm.setPower(-1);
+                    arm.setPower(-.85);
                 })
                 .addDisplacementMarker(20, () -> {
                     // This marker runs 20 inches into the trajectory
@@ -320,8 +320,8 @@ public class Auto1and4newNewNew extends LinearOpMode {
                 .build();
 
         TrajectorySequence leftPark = drive.trajectorySequenceBuilder(trajectory7.end())
-                .lineTo(new Vector2d(-32, -6))
-                .splineToConstantHeading(new Vector2d(-56, -8), Math.toRadians(180))
+                .lineTo(new Vector2d(-32, -8))
+                .splineToConstantHeading(new Vector2d(-50, -8), Math.toRadians(180))
                 .build();
 
         TrajectorySequence midPark = drive.trajectorySequenceBuilder(trajectory7.end())
@@ -476,6 +476,7 @@ public class Auto1and4newNewNew extends LinearOpMode {
                     if (timer.seconds() > 0.1){
                     }
                     if (timer.seconds() > 0.5){
+
                         claw.setPosition(CLOSED_CLAW);
                         arm.setPower(-0.185);
                     }
@@ -483,6 +484,7 @@ public class Auto1and4newNewNew extends LinearOpMode {
                     // If so, move on to the TURN_2 state
                     if (waitTimer1.seconds() >= 1) {
                         currentState = State.TRAJECTORY_3;
+                        lift.setTarget(300);
                         drive.setPoseEstimate(new Pose2d(-60.3, -12, Math.toRadians(180)));
                         drive.followTrajectorySequenceAsync(trajectory3);
                     }
@@ -596,7 +598,7 @@ public class Auto1and4newNewNew extends LinearOpMode {
                     // If so, move on to the TURN_2 state
                     if (waitTimer1.seconds() >= 1) {
                         currentState = State.TRAJECTORY_7;
-                        drive.setPoseEstimate(new Pose2d(-59.8, -12, Math.toRadians(180)));
+                        drive.setPoseEstimate(new Pose2d(-59.2, -12, Math.toRadians(180)));
                         drive.followTrajectorySequenceAsync(trajectory7);
                     }
                     break;

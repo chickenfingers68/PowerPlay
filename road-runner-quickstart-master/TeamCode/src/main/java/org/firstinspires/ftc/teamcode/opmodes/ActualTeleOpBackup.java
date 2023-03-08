@@ -82,9 +82,9 @@ public class ActualTeleOpBackup extends LinearOpMode {
             // Put run blocks here.
             telemetry.addData("Status", "Initiallized");
             while (opModeIsActive()) {
-                double forward = -0.7 * gamepad1.left_stick_y;
-                double strafe = 0.7 * gamepad1.right_stick_x;
-                double rotate = 0.7 * 0.7 * gamepad1.left_stick_x;
+                double forward = -0.85 * gamepad1.left_stick_y;
+                double strafe = 0.85 * gamepad1.right_stick_x;
+                double rotate = 0.85 * 0.7 * gamepad1.left_stick_x;
                 double slides = -gamepad2.right_stick_y;
                 double arms = -gamepad2.left_stick_y;
 
@@ -122,8 +122,8 @@ public class ActualTeleOpBackup extends LinearOpMode {
                     arm_right.setPower(0.0);
                 }
                 if (slides > 0.2) {
-                    slide_left.setPower(0.85);
-                    slide_right.setPower(0.85);
+                    slide_left.setPower(0.9);
+                    slide_right.setPower(0.9);
                 } else if (slides < -0.2) {
                     slide_left.setPower(-0.775);
                     slide_right.setPower(-0.775);

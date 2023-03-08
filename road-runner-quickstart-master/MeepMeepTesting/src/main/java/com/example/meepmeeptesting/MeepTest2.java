@@ -86,10 +86,46 @@ public class MeepTest2 {
 
                 );
 
+        RoadRunnerBotEntity rightrn = new DefaultBotBuilder(meepMeep)
+                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+                .setConstraints(42.5, 25, Math.toRadians(180), Math.toRadians(60), 11.9)
+                .setDimensions(12.25, 14)
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(new Pose2d(-35, -61, Math.toRadians(90)))
+                                .splineToSplineHeading(new Pose2d(28.5, 1, Math.toRadians(5)), Math.toRadians(135))
+                                .waitSeconds(1.5)
+
+                                .lineToConstantHeading(new Vector2d(29, -12))
+                                .splineToConstantHeading(new Vector2d(59.5, -12), Math.toRadians(0))
+                                .waitSeconds(1.)
+                                .lineToConstantHeading(new Vector2d(57, -12))
+                                .splineToConstantHeading(new Vector2d(29, -2), Math.toRadians(90))
+                                .waitSeconds(1.5)
+
+                                .lineToConstantHeading(new Vector2d(50, -12))
+                                .splineToConstantHeading(new Vector2d(59.5, -12), Math.toRadians(0))
+                                .waitSeconds(1.)
+                                .lineToConstantHeading(new Vector2d(57, -12))
+                                .splineToConstantHeading(new Vector2d(29, -2), Math.toRadians(90))
+                                .waitSeconds(1.5)
+
+                                .lineToConstantHeading(new Vector2d(-45, -12))
+                                .splineToConstantHeading(new Vector2d(-62, -12), Math.toRadians(180))
+                                .waitSeconds(1.)
+                                .lineToConstantHeading(new Vector2d(-57, -12))
+                                .splineToConstantHeading(new Vector2d(-29, 1), Math.toRadians(90))
+                                .waitSeconds(1.5)
+
+                                .lineTo(new Vector2d(-32, -12))
+                                .splineToConstantHeading(new Vector2d(-12, -12), Math.toRadians(0))
+                                .build()
+
+                );
+
         meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(rn)
+                .addEntity(rightrn)
                 .start();
     }
 }
