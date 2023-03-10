@@ -92,7 +92,7 @@ public class MeepTest2 {
                 .setDimensions(12.25, 14)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-35, -61, Math.toRadians(90)))
-                                .splineToSplineHeading(new Pose2d(28.5, 1, Math.toRadians(5)), Math.toRadians(135))
+                                .splineToSplineHeading(new Pose2d(-29, 2, Math.toRadians(180)), Math.toRadians(45))
                                 .waitSeconds(1.5)
 
                                 .lineToConstantHeading(new Vector2d(29, -12))

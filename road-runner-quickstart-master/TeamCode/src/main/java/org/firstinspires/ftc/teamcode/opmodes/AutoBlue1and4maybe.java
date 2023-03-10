@@ -169,7 +169,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     // Run your action in here!
                     claw.setPosition(OPEN_CLAW);
                 })
-                .splineToConstantHeading(new Vector2d(60, -9.5), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(60, -9.7), Math.toRadians(0))
                 .addDisplacementMarker(() -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
@@ -232,7 +232,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     // Run your action in here!
                     claw.setPosition(OPEN_CLAW);
                 })
-                .splineToConstantHeading(new Vector2d(59.8, -11.3), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(59.3, -11.5), Math.toRadians(0))
                 .addDisplacementMarker(() -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
@@ -244,7 +244,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
 
         //todo: for setposeestimate stuff change the drive.trajectorybuilder(!!!!) stuff
 
-        TrajectorySequence trajectory5 = drive.trajectorySequenceBuilder(new Pose2d(59.8, -12, Math.toRadians(0)))
+        TrajectorySequence trajectory5 = drive.trajectorySequenceBuilder(new Pose2d(59.3, -12, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(55, -12))
                 .splineToConstantHeading(new Vector2d(30, 4.5), Math.toRadians(90))
                 .addTemporalMarker(1, () -> {
@@ -292,7 +292,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     // Run your action in here!
                     claw.setPosition(OPEN_CLAW);
                 })
-                .splineToConstantHeading(new Vector2d(59.8, -9), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(59.8, -9.5), Math.toRadians(0))
                 .addDisplacementMarker(() -> {
                     // This marker runs 20 inches into the trajectory
                     // Run your action in here!
@@ -475,14 +475,14 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                 case WAIT_1a:
                     if (timer.seconds() > 0.1){
                     }
-                    if (timer.seconds() > 0.5){
+                    if (timer.seconds() > 0.3){
 
                         claw.setPosition(CLOSED_CLAW);
                         arm.setPower(-0.185);
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on to the TURN_2 state
-                    if (waitTimer1.seconds() >= 1) {
+                    if (waitTimer1.seconds() >= 0.6) {
                         currentState = State.TRAJECTORY_3;
                         lift.setTarget(300);
                         drive.setPoseEstimate(new Pose2d(60, -12, Math.toRadians(0)));
@@ -534,15 +534,15 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     if (timer.seconds() > 0.1){
                         arm.setPower(0.2);
                     }
-                    if (timer.seconds() > 0.5){
+                    if (timer.seconds() > 0.3){
                         claw.setPosition(CLOSED_CLAW);
                         arm.setPower(-0.185);
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on to the TURN_2 state
-                    if (waitTimer1.seconds() >= 1) {
+                    if (waitTimer1.seconds() >= 0.6) {
                         currentState = State.TRAJECTORY_5;
-                        drive.setPoseEstimate(new Pose2d(59.8, -12, Math.toRadians(0)));
+                        drive.setPoseEstimate(new Pose2d(59.3 , -12, Math.toRadians(0)));
                         drive.followTrajectorySequenceAsync(trajectory5);
                     }
                     break;
@@ -596,7 +596,7 @@ public class AutoBlue1and4maybe extends LinearOpMode {
                     }
                     // Check if the timer has exceeded the specified wait time
                     // If so, move on to the TURN_2 state
-                    if (waitTimer1.seconds() >= 1) {
+                    if (waitTimer1.seconds() >= 0.5) {
                         currentState = State.TRAJECTORY_7;
                         drive.setPoseEstimate(new Pose2d(59.8, -12, Math.toRadians(0)));
                         drive.followTrajectorySequenceAsync(trajectory7);
