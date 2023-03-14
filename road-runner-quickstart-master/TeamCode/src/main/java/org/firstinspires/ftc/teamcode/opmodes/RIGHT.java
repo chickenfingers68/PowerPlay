@@ -32,7 +32,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.ArrayList;
 
 @Autonomous(name = "RIGHTold", preselectTeleOp = "ActualTeleOp")
-@Disabled
+//@Disabled
 public class RIGHT extends LinearOpMode {
     //Time
     private ElapsedTime runtime = new ElapsedTime();
@@ -183,12 +183,12 @@ public class RIGHT extends LinearOpMode {
 
             }
             /* Actually do something useful */
-            if (tagOfInterest == null || tagOfInterest.id == LeftTag) {
-                location = 1;
-                telemetry.addLine("LEFT");
-            } else if (tagOfInterest.id == RightTag) {
+            if (tagOfInterest == null || tagOfInterest.id == RightTag) {
                 location = 3;
                 telemetry.addLine("Right");
+            } else if (tagOfInterest.id == LeftTag) {
+                location = 1;
+                telemetry.addLine("LEFT");
             } else {
                 location = 2;
                 telemetry.addLine("Middle");
@@ -204,14 +204,14 @@ public class RIGHT extends LinearOpMode {
          */
         //PlayButton
 
-        claw.setPosition(0);
+        claw.setPosition(1);
         waitForStart(); //1100, 420, 900 for slides
 
         if (opModeIsActive() && !isStopRequested()) {
             resetAngle();
             resetAngle();
             encoderFunction();
-            encoderStrafe(0.6, 5.25, -5.25, -5.25, 5.25, 1.5);
+            encoderStrafe(0.75, 3.25, -3.25, -3.25, 3.25, .5);
             setPZero();
             //encoderFunction();
             //rotate(-getAngle(), 0.5);
@@ -221,23 +221,43 @@ public class RIGHT extends LinearOpMode {
                 arm_left.setPower(1);
                 arm_right.setPower(1);
             }
+            /*while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 3 * COUNTS_PER_INCH) > 15) &&
+                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 3 * COUNTS_PER_INCH) > 15) &&
+                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 3 * COUNTS_PER_INCH) > 15) &&
+                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 3 * COUNTS_PER_INCH) > 15) &&
+                    opModeIsActive()) {
+                arm_left.setPower(0.03);
+                arm_right.setPower(0.03);
+                correction = checkDirection();
+                back_left.setPower(-0.3 - correction);
+                back_right.setPower(-0.3 + correction);
+                front_left.setPower(-0.3 - correction);
+                front_right.setPower(-0.3 + correction);
+                telemetry.addData("distance ", back_left.getCurrentPosition() / (COUNTS_PER_INCH * 30 / 30.75));
+                telemetry.update();
+            }
+            setPZero();
+            rotate(-getAngle(), 0.5);
+            encoderFunction();
+
+             */
             //move towards pole
             runtime.reset();
             while(runtime.seconds() < 1.75  && opModeIsActive()){
                 arm_left.setPower(0.03);
                 arm_right.setPower(0.03);
                 correction = checkDirection();
-                back_left.setPower(0.45 - correction);
-                back_right.setPower(0.45 + correction);
-                front_left.setPower(0.45 - correction);
-                front_right.setPower(0.45 + correction);
+                back_left.setPower(0.5 - correction);
+                back_right.setPower(0.5 + correction);
+                front_left.setPower(0.5 - correction);
+                front_right.setPower(0.5 + correction);
                 telemetry.addData("distance ", back_left.getCurrentPosition() / (COUNTS_PER_INCH * 30 / 30.75));
                 telemetry.update();
             }
-            while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 43. * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 43. * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 43. * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 43. * COUNTS_PER_INCH) > 15) &&
+            while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 36 * COUNTS_PER_INCH) > 15) &&
+                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 36 * COUNTS_PER_INCH) > 15) &&
+                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 36 * COUNTS_PER_INCH) > 15) &&
+                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 36 * COUNTS_PER_INCH) > 15) &&
                     opModeIsActive()) {
                 arm_left.setPower(0.03);
                 arm_right.setPower(0.03);
@@ -251,10 +271,10 @@ public class RIGHT extends LinearOpMode {
             }
             setPZero();
             encoderFunction();
-            while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 2 * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 2 * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 2 * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 2 * COUNTS_PER_INCH) > 15) &&
+            while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 8.2 * COUNTS_PER_INCH) > 15) &&
+                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 8.2 * COUNTS_PER_INCH) > 15) &&
+                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 8.2 * COUNTS_PER_INCH) > 15) &&
+                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 8.2 * COUNTS_PER_INCH) > 15) &&
                     opModeIsActive()) {
                 arm_left.setPower(0.03);
                 arm_right.setPower(0.03);
@@ -271,11 +291,11 @@ public class RIGHT extends LinearOpMode {
             encoderFunction();
             //turn to pole
             rotate(90, 0.45);
-            rotate(-3.5, 0.2);
+            rotate(-2.5, 0.2);
             lift.setTarget(2150);
             runtime.reset();
             //lift slides
-            while (runtime.seconds() < 1.5 && opModeIsActive()) {
+            while (runtime.seconds() < 1 && opModeIsActive()) {
                 arm_left.setPower(0.03);
                 arm_right.setPower(0.03);
                 lift.update();
@@ -283,10 +303,10 @@ public class RIGHT extends LinearOpMode {
             encoderFunction();
             runtime.reset();
             //move fwd to pole
-            while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 6. * COUNTS_PER_INCH ) > 7) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 6. * COUNTS_PER_INCH ) > 7) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 6. * COUNTS_PER_INCH ) > 7) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 6.  * COUNTS_PER_INCH ) > 7) &&
+            while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 3.55 * COUNTS_PER_INCH ) > 7) &&
+                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 3.55 * COUNTS_PER_INCH ) > 7) &&
+                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 3.55 * COUNTS_PER_INCH ) > 7) &&
+                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 3.55  * COUNTS_PER_INCH ) > 7) &&
                     opModeIsActive() && runtime.seconds() < 2) {
 
                 arm_left.setPower(0.03);
@@ -304,9 +324,18 @@ public class RIGHT extends LinearOpMode {
             }
             encoderFunction();
             setPZero();
+            lift.setTarget(1750);
             runtime.reset();
-            //drop cone
-            claw.setPosition(0.48);
+            while (runtime.seconds() < .5 && opModeIsActive()) {
+                arm_left.setPower(0.03);
+                arm_right.setPower(0.03);
+                lift.update();
+            }
+
+
+            runtime.reset();
+            //drop
+            claw.setPosition(0.78);
             while (opModeIsActive() && runtime.seconds() < 0.75) {
 
                 arm_left.setPower(0.03);
@@ -314,13 +343,23 @@ public class RIGHT extends LinearOpMode {
                 lift.update();
 
             }
-            encoderFunction();
+
+            lift.setTarget(2150);
             runtime.reset();
-            //move away from pole
-            while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 6.05 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 6.05 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 6.05 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 6.05 * COUNTS_PER_INCH ) > 9) &&
+            while (runtime.seconds() < .35 && opModeIsActive()) {
+                arm_left.setPower(0.03);
+                arm_right.setPower(0.03);
+                lift.update();
+            }
+            encoderFunction();
+
+
+            runtime.reset();
+            //move away from cone
+            while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 4.05 * COUNTS_PER_INCH ) > 9) &&
+                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 4.05 * COUNTS_PER_INCH ) > 9) &&
+                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 4.05 * COUNTS_PER_INCH ) > 9) &&
+                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 4.05 * COUNTS_PER_INCH ) > 9) &&
                     opModeIsActive()) {
 
                 arm_left.setPower(0.03);
@@ -351,15 +390,14 @@ public class RIGHT extends LinearOpMode {
                 arm_right.setPower(0);
                 lift.update();
             }
-            resetAngle();
             //rotate to face other alliance
             rotate(-90, 0.45);
             encoderFunction();
             //move forward and knowck signal sleeve out of way
-            while((Math.abs(Math.abs(back_left.getCurrentPosition()) - 14.75 * COUNTS_PER_INCH ) > 10) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 14.75 * COUNTS_PER_INCH ) > 10) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 14.75 * COUNTS_PER_INCH ) > 10) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 14.75 * COUNTS_PER_INCH ) > 10) &&
+            while((Math.abs(Math.abs(back_left.getCurrentPosition()) - 5.5 * COUNTS_PER_INCH ) > 10) &&
+                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 5.5 * COUNTS_PER_INCH ) > 10) &&
+                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 5.5 * COUNTS_PER_INCH ) > 10) &&
+                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 5.5 * COUNTS_PER_INCH ) > 10) &&
                     opModeIsActive()){
 
                 arm_left.setPower(0.03);
@@ -370,262 +408,70 @@ public class RIGHT extends LinearOpMode {
                 back_right.setPower(0.3 + correction);
                 front_left.setPower(0.3 - correction);
                 front_right.setPower(0.3 + correction);
-                claw.setPosition(0);
+                claw.setPosition(1);
                 telemetry.update();
             }
             setPZero();
             rotate(-getAngle(), 0.3);
             encoderFunction();
-            //move back a bit
-            while((Math.abs(Math.abs(back_left.getCurrentPosition()) - 1.75 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 1.75 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 1.75 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 1.75 * COUNTS_PER_INCH ) > 9) &&
-                    opModeIsActive()){
 
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-                correction = checkDirection();
-                back_left.setPower(-0.3 - correction);
-                back_right.setPower(-0.3 + correction);
-                front_left.setPower(-0.3 - correction);
-                front_right.setPower(-0.3 + correction);
-                claw.setPosition(0.48);
-                telemetry.update();
-            }
-            setPZero();
-            //turn to face cone stack
             rotate(-90, 0.45);
             //fix angle
-            rotate(2, 0.2);
+            rotate(10, 0.2);
             encoderFunction();
             runtime.reset();
             //start moving twd cone stack
-            while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 19.75 * COUNTS_PER_INCH ) > 20) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 19.75 * COUNTS_PER_INCH ) > 20) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 19.75 * COUNTS_PER_INCH ) > 20) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 19.75 * COUNTS_PER_INCH ) > 20) &&
-                    opModeIsActive()){
 
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-                correction = checkDirection();
-                back_left.setPower(0.6 - correction);
-                back_right.setPower(0.6 + correction);
-                front_left.setPower(0.6 - correction);
-                front_right.setPower(0.6 + correction);
-                telemetry.update();
-            }
-            setPZero();
-            lift.setTarget(1100);
-            runtime.reset();
-            //lift lift
-            while (runtime.seconds() < 0.3 && opModeIsActive()) {
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-            }
-            setPZero();
-            encoderFunction();
-            encoderFunction();
-            runtime.reset();
-            //finish move to stack
-            while((Math.abs(Math.abs(back_left.getCurrentPosition()) - 12.25 * COUNTS_PER_INCH ) > 15) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 12.25 * COUNTS_PER_INCH ) > 15) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 12.25 * COUNTS_PER_INCH ) > 15) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 12.25 * COUNTS_PER_INCH ) > 15) &&
-                    opModeIsActive()){
-
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-                correction = checkDirection();
-                back_left.setPower(0.5 - correction);
-                back_right.setPower(0.5 + correction);
-                front_left.setPower(0.5 - correction);
-                front_right.setPower(0.5 + correction);
-                telemetry.update();
-            }
-            setPZero();
-            //drop lift
-            lift.setTarget(410);
-            runtime.reset();
-            while (runtime.seconds() < .4 && opModeIsActive()) {
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-            }
-            //grab cone
-            runtime.reset();
-            claw.setPosition(0);
-            while (runtime.seconds() < .4 && opModeIsActive()) {
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-            }
-            //lift lift
-            lift.setTarget(900);
-            runtime.reset();
-            while (runtime.seconds() < 0.6 && opModeIsActive()) {
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-            }
-            encoderFunction();
-            runtime.reset();
-            //move back toward pole
-            while((Math.abs(Math.abs(back_left.getCurrentPosition()) - 16.75 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 16.75 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 16.75 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 16.75 * COUNTS_PER_INCH ) > 9) &&
-                    opModeIsActive()){
-
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-                correction = checkDirection();
-                back_left.setPower(-0.3 - correction);
-                back_right.setPower(-0.3 + correction);
-                front_left.setPower(-0.3 - correction);
-                front_right.setPower(-0.3 + correction);
-                telemetry.update();
-            }
-
-
-
-
-
-            setPZero();
-            encoderFunction();
-            //rotate toward alliance
-            rotate(-90, 0.45);
-            //rotate(.5, 0.3);
-            lift.setTarget(1300);
-            runtime.reset();
-            //lift slides
-            while (runtime.seconds() < 0.75 && opModeIsActive()) {
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-            }
-            rotate(1, 0.2);
-            encoderFunction();
-            //drive forward to pole
-            while((Math.abs(Math.abs(back_left.getCurrentPosition()) - 7.1 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 7.1 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 7.1 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 7.1 * COUNTS_PER_INCH ) > 9) &&
-                    opModeIsActive()){
-
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-                correction = checkDirection();
-                back_left.setPower(0.3 - correction);
-                back_right.setPower(0.3 + correction);
-                front_left.setPower(0.3 - correction);
-                front_right.setPower(0.3 + correction);
-                telemetry.update();
-            }
-            //rotate(3, 0.4);
-            setPZero();
-            encoderFunction();
-            lift.setTarget(900);
-            runtime.reset();
-            while (runtime.seconds() < .5 && opModeIsActive()) {
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-            }
-            runtime.reset();
-            //drop
-            claw.setPosition(0.48);
-            while (opModeIsActive() && runtime.seconds() < 0.25) {
-
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-
-            }
-            lift.setTarget(1100);
-            runtime.reset();
-            while (runtime.seconds() < .35 && opModeIsActive()) {
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-            }
-            encoderFunction();
-            runtime.reset();
-            //move away from pole
-            while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 6.75 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 6.75 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 6.75 * COUNTS_PER_INCH ) > 9) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 6.75 * COUNTS_PER_INCH ) > 9) &&
-                    opModeIsActive()) {
-
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-                correction = checkDirection();
-                back_left.setPower(-0.3 - correction);
-                back_right.setPower(-0.3 + correction);
-                front_left.setPower(-0.3 - correction);
-                front_right.setPower(-0.3 + correction);
-            }
-            setPZero();
-            lift.setTarget(0);
-            runtime.reset();
-            //retract slides
-            while (runtime.seconds() < 0.3 && opModeIsActive()) {
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-            }
             lift.idle();
             encoderFunction();
-            if(location==1){
+            if(location==3){
                 lift.idle();
                 setPZero();
                 encoderFunction();
-                encoderStrafe(1, -35, 35, 35, -35, 2.0);
-                setPZero();
-                encoderFunction();
-                //move back a bit
-                while((Math.abs(Math.abs(back_left.getCurrentPosition()) - 6 * COUNTS_PER_INCH ) > 20) &&
-                        (Math.abs(Math.abs(back_right.getCurrentPosition()) - 6 * COUNTS_PER_INCH ) > 20) &&
-                        (Math.abs(Math.abs(front_left.getCurrentPosition()) - 6 * COUNTS_PER_INCH ) > 20) &&
-                        (Math.abs(Math.abs(front_right.getCurrentPosition()) - 6 * COUNTS_PER_INCH ) > 20) &&
+                while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 13.7 * COUNTS_PER_INCH ) > 20) &&
+                        (Math.abs(Math.abs(back_right.getCurrentPosition()) - 13.7 * COUNTS_PER_INCH ) > 20) &&
+                        (Math.abs(Math.abs(front_left.getCurrentPosition()) - 13.7 * COUNTS_PER_INCH ) > 20) &&
+                        (Math.abs(Math.abs(front_right.getCurrentPosition()) - 13.7 * COUNTS_PER_INCH ) > 20) &&
                         opModeIsActive()){
 
                     arm_left.setPower(0.03);
                     arm_right.setPower(0.03);
                     lift.update();
                     correction = checkDirection();
-                    back_left.setPower(1 - correction);
-                    back_right.setPower(1 + correction);
-                    front_left.setPower(1 - correction);
-                    front_right.setPower(1 + correction);
+                    back_left.setPower(0.3 - correction);
+                    back_right.setPower(0.3 + correction);
+                    front_left.setPower(0.3 - correction);
+                    front_right.setPower(0.3 + correction);
                     telemetry.update();
                 }
-                encoderStrafe(1, 3, -3, -3, 3, 2.0);
             }
             else if(location == 2){
-
                 lift.idle();
                 setPZero();
                 encoderFunction();
-                encoderStrafe(1, -12, 12, 12, -12, 2.0);
                 setPZero();
             }
-            else if (location == 3) {
-
+            else if (location == 1) {
                 lift.idle();
                 setPZero();
                 encoderFunction();
-                encoderStrafe(1, 12, -12, -12, 12, 2.0);
-                setPZero();
+                while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 11.5 * COUNTS_PER_INCH ) > 20) &&
+                        (Math.abs(Math.abs(back_right.getCurrentPosition()) - 11.5 * COUNTS_PER_INCH ) > 20) &&
+                        (Math.abs(Math.abs(front_left.getCurrentPosition()) - 11.5 * COUNTS_PER_INCH ) > 20) &&
+                        (Math.abs(Math.abs(front_right.getCurrentPosition()) - 11.5 * COUNTS_PER_INCH ) > 20) &&
+                        opModeIsActive()){
+
+                    arm_left.setPower(0.03);
+                    arm_right.setPower(0.03);
+                    lift.update();
+                    correction = checkDirection();
+                    back_left.setPower(-0.3 - correction);
+                    back_right.setPower(-0.3 + correction);
+                    front_left.setPower(-0.3 - correction);
+                    front_right.setPower(-0.3 + correction);
+                    telemetry.update();
+                }
+                //encoderStrafe(1, 3, -3, -3, 3, 2.0);
             }
         }
     }
@@ -788,7 +634,7 @@ public class RIGHT extends LinearOpMode {
             front_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            sleep(150);   // optional pause after each move.
+            sleep(250);   // optional pause after each move.
         }
 
     }
@@ -835,7 +681,7 @@ public class RIGHT extends LinearOpMode {
         // The gain value determines how sensitive the correction is to direction changes.
         // You will have to experiment with your robot to get small smooth direction changes
         // to stay on a straight line.
-        double correction, angle, gain = .105;
+        double correction, angle, gain = .05;
 
         angle = getAngle();
 

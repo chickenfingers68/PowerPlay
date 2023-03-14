@@ -31,9 +31,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "LEFTold", preselectTeleOp = "ActualTeleOp")
-//@Disabled
-public class TestLeftAuto extends LinearOpMode {
+@Autonomous(name = "LEFToldNew", preselectTeleOp = "ActualTeleOp")
+@Disabled
+public class NewOldLeft extends LinearOpMode {
     //Time
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -221,26 +221,6 @@ public class TestLeftAuto extends LinearOpMode {
                 arm_left.setPower(1);
                 arm_right.setPower(1);
             }
-            /*while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 3 * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 3 * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 3 * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 3 * COUNTS_PER_INCH) > 15) &&
-                    opModeIsActive()) {
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                correction = checkDirection();
-                back_left.setPower(-0.3 - correction);
-                back_right.setPower(-0.3 + correction);
-                front_left.setPower(-0.3 - correction);
-                front_right.setPower(-0.3 + correction);
-                telemetry.addData("distance ", back_left.getCurrentPosition() / (COUNTS_PER_INCH * 30 / 30.75));
-                telemetry.update();
-            }
-            setPZero();
-            rotate(-getAngle(), 0.5);
-            encoderFunction();
-
-             */
             //move towards pole
             runtime.reset();
             while(runtime.seconds() < 1.75  && opModeIsActive()){
@@ -254,10 +234,10 @@ public class TestLeftAuto extends LinearOpMode {
                 telemetry.addData("distance ", back_left.getCurrentPosition() / (COUNTS_PER_INCH * 30 / 30.75));
                 telemetry.update();
             }
-            while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 36 * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 36 * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 36 * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 36 * COUNTS_PER_INCH) > 15) &&
+            while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 44.25 * COUNTS_PER_INCH) > 15) &&
+                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 44.25 * COUNTS_PER_INCH) > 15) &&
+                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 44.25 * COUNTS_PER_INCH) > 15) &&
+                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 44.25 * COUNTS_PER_INCH) > 15) &&
                     opModeIsActive()) {
                 arm_left.setPower(0.03);
                 arm_right.setPower(0.03);
@@ -270,34 +250,17 @@ public class TestLeftAuto extends LinearOpMode {
                 telemetry.update();
             }
             setPZero();
-            encoderFunction();
-            while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 6.75 * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 6.75 * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 6.75 * COUNTS_PER_INCH) > 15) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 6.75 * COUNTS_PER_INCH) > 15) &&
-                    opModeIsActive()) {
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                correction = checkDirection();
-                back_left.setPower(-0.3 - correction);
-                back_right.setPower(-0.3 + correction);
-                front_left.setPower(-0.3 - correction);
-                front_right.setPower(-0.3 + correction);
-                telemetry.addData("distance ", back_left.getCurrentPosition() / (COUNTS_PER_INCH * 30 / 30.75));
-                telemetry.update();
-            }
-            setPZero();
             rotate(-getAngle(), 0.5);
             encoderFunction();
             //turn to pole
-            rotate(-90, 0.45);
-            rotate(1, 0.2);
-            lift.setTarget(2150);
+            rotate(90, 0.45);
+            //rotate(2, 0.2);
+            lift.setTarget(2400);
             runtime.reset();
             //lift slides
             while (runtime.seconds() < 1 && opModeIsActive()) {
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
+                arm_left.setPower(-0.35);
+                arm_right.setPower(-0.35);
                 lift.update();
             }
             encoderFunction();
@@ -309,28 +272,20 @@ public class TestLeftAuto extends LinearOpMode {
                     (Math.abs(Math.abs(front_right.getCurrentPosition()) - 4.4  * COUNTS_PER_INCH ) > 7) &&
                     opModeIsActive() && runtime.seconds() < 2) {
 
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
                 lift.update();
                 correction = checkDirection();
-                back_left.setPower(0.2 - correction);
-                back_right.setPower(0.2 + correction);
-                front_left.setPower(0.2 - correction);
-                front_right.setPower(0.2 + correction);
+                back_left.setPower(-0.2 - correction);
+                back_right.setPower(-0.2 + correction);
+                front_left.setPower(-0.2 - correction);
+                front_right.setPower(-0.2 + correction);
                 telemetry.addData("pos ", Math.abs(back_left.getCurrentPosition()));
                 telemetry.addData("target ", 5 * COUNTS_PER_INCH );
                 telemetry.addData("whole thing ", Math.abs(Math.abs(back_left.getCurrentPosition()) - 5 * COUNTS_PER_INCH * 30.0 / 30.7));
                 telemetry.update();
             }
+
             encoderFunction();
             setPZero();
-            lift.setTarget(1750);
-            runtime.reset();
-            while (runtime.seconds() < .5 && opModeIsActive()) {
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
-                lift.update();
-            }
 
 
             runtime.reset();
@@ -338,13 +293,13 @@ public class TestLeftAuto extends LinearOpMode {
             claw.setPosition(0.78);
             while (opModeIsActive() && runtime.seconds() < 0.75) {
 
-                arm_left.setPower(0.03);
-                arm_right.setPower(0.03);
+                arm_left.setPower(0.15);
+                arm_right.setPower(0.15);
                 lift.update();
 
             }
-
-            lift.setTarget(2150);
+            claw.setPosition(1);
+            lift.setTarget(100);
             runtime.reset();
             while (runtime.seconds() < .35 && opModeIsActive()) {
                 arm_left.setPower(0.03);
@@ -366,10 +321,10 @@ public class TestLeftAuto extends LinearOpMode {
                 arm_right.setPower(0.03);
                 lift.update();
                 correction = checkDirection();
-                back_left.setPower(-0.3 - correction);
-                back_right.setPower(-0.3 + correction);
-                front_left.setPower(-0.3 - correction);
-                front_right.setPower(-0.3 + correction);
+                back_left.setPower(0.3 - correction);
+                back_right.setPower(0.3 + correction);
+                front_left.setPower(0.3 - correction);
+                front_right.setPower(0.3 + correction);
                 telemetry.addData("pos ", Math.abs(back_left.getCurrentPosition()));
                 telemetry.addData("target ", 6 * COUNTS_PER_INCH );
                 telemetry.addData("whole thing ", Math.abs(Math.abs(back_left.getCurrentPosition()) - 6 * COUNTS_PER_INCH * 30.0 / 30.7));
@@ -390,15 +345,13 @@ public class TestLeftAuto extends LinearOpMode {
                 arm_right.setPower(0);
                 lift.update();
             }
-            //rotate to face other alliance
-            rotate(90, 0.45);
             encoderFunction();
-            //move forward and knowck signal sleeve out of way
-            while((Math.abs(Math.abs(back_left.getCurrentPosition()) - 9 * COUNTS_PER_INCH ) > 10) &&
-                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 9 * COUNTS_PER_INCH ) > 10) &&
-                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 9 * COUNTS_PER_INCH ) > 10) &&
-                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 9 * COUNTS_PER_INCH ) > 10) &&
-                    opModeIsActive()){
+            rotate(90, 0.45);
+            while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 8 * COUNTS_PER_INCH ) > 9) &&
+                    (Math.abs(Math.abs(back_right.getCurrentPosition()) - 8 * COUNTS_PER_INCH ) > 9) &&
+                    (Math.abs(Math.abs(front_left.getCurrentPosition()) - 8 * COUNTS_PER_INCH ) > 9) &&
+                    (Math.abs(Math.abs(front_right.getCurrentPosition()) - 8 * COUNTS_PER_INCH ) > 9) &&
+                    opModeIsActive()) {
 
                 arm_left.setPower(0.03);
                 arm_right.setPower(0.03);
@@ -408,30 +361,23 @@ public class TestLeftAuto extends LinearOpMode {
                 back_right.setPower(0.3 + correction);
                 front_left.setPower(0.3 - correction);
                 front_right.setPower(0.3 + correction);
-                claw.setPosition(1);
+                telemetry.addData("pos ", Math.abs(back_left.getCurrentPosition()));
+                telemetry.addData("target ", 6 * COUNTS_PER_INCH );
+                telemetry.addData("whole thing ", Math.abs(Math.abs(back_left.getCurrentPosition()) - 6 * COUNTS_PER_INCH * 30.0 / 30.7));
                 telemetry.update();
             }
-            setPZero();
-            rotate(-getAngle(), 0.3);
-            encoderFunction();
-
-            rotate(90, 0.45);
-            //fix angle
-            rotate(-10, 0.2);
-            encoderFunction();
-            runtime.reset();
-            //start moving twd cone stack
-
             lift.idle();
+            encoderFunction();
+            rotate(-90, 0.45);
             encoderFunction();
             if(location==1){
                 lift.idle();
                 setPZero();
                 encoderFunction();
-                while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 12.45 * COUNTS_PER_INCH ) > 20) &&
-                        (Math.abs(Math.abs(back_right.getCurrentPosition()) - 12.45 * COUNTS_PER_INCH ) > 20) &&
-                        (Math.abs(Math.abs(front_left.getCurrentPosition()) - 12.45 * COUNTS_PER_INCH ) > 20) &&
-                        (Math.abs(Math.abs(front_right.getCurrentPosition()) - 12.45 * COUNTS_PER_INCH ) > 20) &&
+                while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 12 * COUNTS_PER_INCH ) > 20) &&
+                        (Math.abs(Math.abs(back_right.getCurrentPosition()) - 12 * COUNTS_PER_INCH ) > 20) &&
+                        (Math.abs(Math.abs(front_left.getCurrentPosition()) - 12 * COUNTS_PER_INCH ) > 20) &&
+                        (Math.abs(Math.abs(front_right.getCurrentPosition()) - 12 * COUNTS_PER_INCH ) > 20) &&
                         opModeIsActive()){
 
                     arm_left.setPower(0.03);
@@ -455,10 +401,10 @@ public class TestLeftAuto extends LinearOpMode {
                 lift.idle();
                 setPZero();
                 encoderFunction();
-                while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 11.35 * COUNTS_PER_INCH ) > 20) &&
-                        (Math.abs(Math.abs(back_right.getCurrentPosition()) - 11.35 * COUNTS_PER_INCH ) > 20) &&
-                        (Math.abs(Math.abs(front_left.getCurrentPosition()) - 11.35 * COUNTS_PER_INCH ) > 20) &&
-                        (Math.abs(Math.abs(front_right.getCurrentPosition()) - 11.35 * COUNTS_PER_INCH ) > 20) &&
+                while ((Math.abs(Math.abs(back_left.getCurrentPosition()) - 12 * COUNTS_PER_INCH ) > 20) &&
+                        (Math.abs(Math.abs(back_right.getCurrentPosition()) - 12 * COUNTS_PER_INCH ) > 20) &&
+                        (Math.abs(Math.abs(front_left.getCurrentPosition()) - 12 * COUNTS_PER_INCH ) > 20) &&
+                        (Math.abs(Math.abs(front_right.getCurrentPosition()) - 12 * COUNTS_PER_INCH ) > 20) &&
                         opModeIsActive()){
 
                     arm_left.setPower(0.03);

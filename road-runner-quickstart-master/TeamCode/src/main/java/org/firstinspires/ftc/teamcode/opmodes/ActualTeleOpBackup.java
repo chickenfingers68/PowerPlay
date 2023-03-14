@@ -24,6 +24,8 @@ public class ActualTeleOpBackup extends LinearOpMode {
     private DcMotor slide_right;
     private IMU imu;
 
+    public static double OPEN_CLAW = 0.75;
+
     private void setDrivePowers(double bLPower, double bRPower, double fLPower, double fRPower) {
         double maxSpeed = 1.0;
         maxSpeed = Math.max(maxSpeed, Math.abs(bLPower));
@@ -84,7 +86,7 @@ public class ActualTeleOpBackup extends LinearOpMode {
             while (opModeIsActive()) {
                 double forward = -0.85 * gamepad1.left_stick_y;
                 double strafe = 0.85 * gamepad1.right_stick_x;
-                double rotate = 0.85 * 0.7 * gamepad1.left_stick_x;
+                double rotate = 0.85 * 0.6 * gamepad1.left_stick_x;
                 double slides = -gamepad2.right_stick_y;
                 double arms = -gamepad2.left_stick_y;
 
@@ -96,7 +98,7 @@ public class ActualTeleOpBackup extends LinearOpMode {
                 // reset speed variables
 
                 if (gamepad2.left_trigger > 0.1 || gamepad2.x) {
-                    claw.setPosition(0.82);
+                    claw.setPosition(OPEN_CLAW);
                     //claw.setPower(1);
                     clawopen = true;
 

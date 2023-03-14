@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -41,12 +42,13 @@ import java.util.ArrayList;
  * to supercharge your code. This can be much cleaner by abstracting many of these things. This
  * opmode only serves as an initial starting point.
  */
-@Autonomous(name = "Parking only (backup)", group = "adv")
-public class OldParkAuto extends LinearOpMode {
+@Autonomous(name = "LeftPreload", group = "adv")
+@Disabled
+public class LeftPreload extends LinearOpMode {
 
     private Servo claw;
     public static double firstX = 27.5;
-    double OPEN_CLAW = 0.82;
+    double OPEN_CLAW = 0.78;
     double CLOSED_CLAW = 1.0;
 
     //Cameras
@@ -95,7 +97,7 @@ public class OldParkAuto extends LinearOpMode {
         WAIT_3,         // Then we're gonna wait a second to score
         TRAJECTORY_6,
         TRAJECTORY_7,
-        TRAJECTORY_3a,
+        TRAJECTORY_2a,
         TRAJECTORY_5a,
         WAIT_4,
         WAIT_5,
@@ -129,27 +131,33 @@ public class OldParkAuto extends LinearOpMode {
 
         // Let's define our trajectories
         Trajectory trajectory1 = drive.trajectoryBuilder(startPose)
-                .strafeLeft(24)
+                .addDisplacementMarker(0.5, () -> {
+                    // This marker runs 20 inches into the trajectory
+                    // Run your action in here!
+                    ////arm.setPower(-0.05)
+                    claw.setPosition(CLOSED_CLAW);
+                })
+                .lineToLinearHeading(new Pose2d(-30.5, 0, Math.toRadians(176)))
+                .addDisplacementMarker(25, () -> {
+                    // This marker runs 20 inches into the trajectory
+                    // Run your action in here!
+                    lift.setTarget(2400);
+                    arm.setPower(-.3);
+                })
                 .build();
 
-        // Second trajectory
-        // Ensure that we call trajectory1.end() as the start for this one
-        Trajectory trajectory2 = drive.trajectoryBuilder(trajectory1.end())
-                .forward(36)
+        TrajectorySequence leftPark = drive.trajectorySequenceBuilder(new Pose2d(-firstX, 0, Math.toRadians(180)))
+                .lineTo(new Vector2d(-32, -16))
+                .splineToConstantHeading(new Vector2d(-50, -12), Math.toRadians(180))
                 .build();
 
-        Trajectory trajectory3 = drive.trajectoryBuilder(startPose)
-                .forward(36)
+        TrajectorySequence midPark = drive.trajectorySequenceBuilder(new Pose2d(-firstX, 0, Math.toRadians(180)))
+                .lineTo(new Vector2d(-32, -16))
                 .build();
 
-        Trajectory trajectory4 = drive.trajectoryBuilder(startPose)
-                .strafeRight(24)
-                .build();
-
-        // Second trajectory
-        // Ensure that we call trajectory1.end() as the start for this one
-        Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end())
-                .forward(36)
+        TrajectorySequence rightPark = drive.trajectorySequenceBuilder(new Pose2d(-firstX, 0, Math.toRadians(180)))
+                .lineTo(new Vector2d(-32, -16))
+                .splineToConstantHeading(new Vector2d(-16, -12), Math.toRadians(180))
                 .build();
 
         // Define a 1.5 second wait time
@@ -242,21 +250,8 @@ public class OldParkAuto extends LinearOpMode {
         // Then have it follow that trajectory
         // Make sure you use the async version of the commands
         // Otherwise it will be blocking and pause the program here until the trajectory finishes
-        if(location == 1){
-
-            currentState = State.TRAJECTORY_1;
-            drive.followTrajectoryAsync(trajectory1);
-        }
-        else if(location == 2){
-
-            currentState = State.TRAJECTORY_3;
-            drive.followTrajectoryAsync(trajectory3);
-        }
-        else{
-
-            currentState = State.TRAJECTORY_4;
-            drive.followTrajectoryAsync(trajectory4);
-        }
+        currentState = State.TRAJECTORY_1;
+        drive.followTrajectoryAsync(trajectory1);
 
         while (opModeIsActive() && !isStopRequested()) {
             // Our state machine logic
@@ -266,53 +261,48 @@ public class OldParkAuto extends LinearOpMode {
             // We essentially define the flow of the state machine through this switch statement
             switch (currentState) {
                 case TRAJECTORY_1:
-                    claw.setPosition(CLOSED_CLAW);
                     // Check if the drive class is busy following the trajectory
                     // If not, move onto the next state, WAIT_1
                     if (!drive.isBusy()) {
-                        currentState = State.TRAJECTORY_2;
-                        drive.followTrajectoryAsync(trajectory2);
+                        currentState = State.WAIT_1;
+                        // Start the wait timer once we switch to the next state
+                        // This is so we can track how long we've been in the WAIT_1 state
+                        drive.setPoseEstimate(new Pose2d(new Vector2d(-firstX, -24), Math.toRadians(180)));
+                        waitTimer1.reset();
+                        timer.reset();
                     }
                     break;
-                case TRAJECTORY_2:
-                    // Check if the drive class is busy following the trajectory
-                    // Move on to the next state, TURN_1, once finished
-                    if (!drive.isBusy()) {
+                case WAIT_1:
+                    counter++;
+                    if(timer.seconds() > 0.5){
+                        claw.setPosition(OPEN_CLAW);
+                    }
+                    if(timer.seconds() > 0.55){
+                        arm.setPower(.75);
+                    }
+                    if(timer.seconds() > 0.95){
+                        lift.setTarget(100);
+                    }
+                    // Check if the timer has exceeded the specified wait time
+                    // If so, move on
+                    if (waitTimer1.seconds() >= 1) {
                         currentState = State.IDLE;
+                        if(location == 1){
+                            drive.followTrajectorySequenceAsync(leftPark);
+                        } else if(location == 2){
+                            drive.followTrajectorySequenceAsync(midPark);
+                        } else if(location == 3){
+                            drive.followTrajectorySequenceAsync(rightPark);
+                        }
                     }
                     break;
-                case TRAJECTORY_3:
-                    claw.setPosition(CLOSED_CLAW);
-                    // Check if the drive class is busy following the trajectory
-                    // Move on to the next state, TURN_1, once finished
-                    if (!drive.isBusy()) {
-                        currentState = State.IDLE;
-                    }
-                    break;
-                case TRAJECTORY_4:
-                    claw.setPosition(CLOSED_CLAW);
-                    // Check if the drive class is busy following the trajectory
-                    // If not, move onto the next state, WAIT_1
-                    if (!drive.isBusy()) {
-                        currentState = State.TRAJECTORY_5;
-                        drive.followTrajectoryAsync(trajectory5);
-                    }
-                    break;
-                case TRAJECTORY_5:
-                    // Check if the drive class is busy following the trajectory
-                    // Move on to the next state, TURN_1, once finished
-                    if (!drive.isBusy()) {
-                        currentState = State.IDLE;
-                    }
-                    break;
-
 
 
                 case IDLE:
                     // Do nothing in IDLE
                     // currentState does not change once in IDLE
                     // This concludes the autonomous program
-                    arm.setPower(0);
+                    //arm.setPower(0);
                     break;
             }
 

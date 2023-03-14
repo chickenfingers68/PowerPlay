@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
  * opmode only serves as an initial starting point.
  */
 @Autonomous(name = "211left", group = "advanced")
+@Disabled
 public class AutoTwoOneOneLeft extends LinearOpMode {
 
     private Servo claw;
@@ -292,7 +294,7 @@ public class AutoTwoOneOneLeft extends LinearOpMode {
                     // Run your action in here!
                     claw.setPosition(OPEN_CLAW);
                 })
-                .splineToConstantHeading(new Vector2d(-56.75, -12), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-56.75, -12.5), Math.toRadians(180))
 
                 .build();
 
